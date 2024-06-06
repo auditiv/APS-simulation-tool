@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.2/css/bootstrap.min.css}" />
+</head>
+
+<body>
+
+<div th:fragment="table">
+  <table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+      <th> Update </th>
+      <th>ID</th>
+      <th>Patient</th>
+      <th>Algorithm</th>
+      <th>Sensor</th>
+      <th>Insulin Pump</th>
+      <th>Meals</th>
+      <th>Ready to Plot</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="s : ${simulations}" th:class="${s.readyToPlot} ? 'alert alert-success' : 'alert alert-warning'">
+      <td>
+        <div class="btn btn-group-sm" role="group">
+          <a class="btn btn-info" th:href="@{/edit-parameters/{id}(id=${s.id})}">
+            <i class="bi bi-pencil-fill"></i> Edit</a>
+          <a class="btn btn-danger" th:href="@{/delete-simulation/{id}(id=${s.id})}">
+            <i class="bi bi-trash-fill"></i> Delete</a>
+        </div>
+      </td>
+      <td th:text="${s.id}"></td>
+      <td  th:text="${s.virtualPatient}"></td>
+      <td th:text="${s.algorithm}"></td>
+      <td th:text="${s.sensor}"></td>
+      <td  th:text="${s.insulinPump}">fill</td>
+      <td  th:text="${s.meals}">fill</td>
+      <!--<td  th:text="${s.readyToPlot}">fill</td>-->
+      <!--THIS IS THe CHECKBOX  TRIGGERING THE POST REQUEST-->
+      <td>
+        <form th:action="@{/update-feature}" method="post">
+        <!-- Hidden field for the object ID -->
+        <input type="hidden" th:value="${s.id}" name="id" />
+        <input type="hidden" name="readyToPlot" value="false" /> <!-- Default value when unchecked -->
+        <label>
+          <input type="checkbox" th:name="readyToPlot" th:value="true" th:checked="${s.readyToPlot}" onchange="this.form.submit();" />
+          Enable Feature
+        </label>
+      </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+</div>
+</body>
+</html>

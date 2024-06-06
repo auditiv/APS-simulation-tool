@@ -1,0 +1,22 @@
+###################################################THiS IS A HOW TO FILE ###################
+MANIPULATE DB in SQL:
+OPEN browser at localhost .../h2-console
+Put in the credentials and login
+-> see application-properties
+_____________________________________________
+Delete Column:
+ALTER TABLE Customers
+DROP COLUMN ContactName;
+______________________________________________
+It is possible to delete all rows in a table without deleting the table. This means that the table structure, attributes, and indexes will be intact:
+
+DELETE FROM table_name;
+########################################################################################
+
+// add parameters to hashMap
+        var hashmap: HashMap<String, List<Parameter>?> = hashMapOf()
+        for (p in parameters){
+            var nameOfAttribute: String = "${topologyOfParameters[indexTopo]}Parameters"
+            hashmap[nameOfAttribute] = SerializeHelper.deserializeToListOfParameter(p)
+            indexTopo += 1
+        }

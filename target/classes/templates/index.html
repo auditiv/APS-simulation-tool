@@ -1,0 +1,242 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.2/css/bootstrap.min.css}" />
+    <link th:rel="stylesheet" th:href="@{https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css}">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+<div class="container">
+    <h1>APS Simulation Tool</h1>
+    <hr />
+    <table class="table table-bordered table-striped">
+        <form action="1" th:action="@{/setting}" th:object="${sim}" method="POST">
+
+        <thead>
+        <tr>
+            <th>Virtual Patient</th>
+            <th>Algorithms</th>
+            <th>Sensor</th>
+            <th>Insulin Pump</th>
+            <th>Meals</th>
+            <th>Send To DB</th>
+        </tr>
+        </thead>
+        <tbody>
+
+
+        <tr>
+            <td>
+                <div class="form-group blu-margin">
+                    <select class="form-control" id="VirtualPatient"  type="text" name="virtualPatient">
+                        <option disabled>Please select...</option>
+                        <option th:each="vPatient : ${virtualPatients}"  th:text="${vPatient}"></option>
+                    </select>
+                </div>
+            </td>
+            <td>
+                <div  class="form-group blu-margin">
+                    <select class="form-control" id="dropAlgo" type="text" name="algorithm">
+                        <option disabled>Please select...</option>
+                        <option th:each="algo : ${algorithms}" th:text="${algo}"></option>
+                    </select>
+                </div>
+            </td>
+            <td>
+            <div class="form-group blu-margin">
+                <select class="form-control" id="dropSens" type="text" name="sensor">
+                    <option disabled>Please select...</option>
+                    <option th:each="sens : ${sensors}" th:text="${sens}"></option>
+                </select>
+            </div>
+            </td>
+            <td>
+                <div class="form-group blu-margin">
+                    <select class="form-control" id="insuPump"  type="text" name="insulinPump">
+                        <option disabled>Please select...</option>
+                        <option th:each="iPump : ${insulinPumps}"  th:text="${iPump}"></option>
+                    </select>
+                </div>
+            </td>
+
+            <td>
+                <div class="form-group blu-margin">
+                    <select class="form-control" id="Meals"  type="text" name="meals">
+                        <option disabled>Please select...</option>
+                        <option th:each="nrOfMeals : ${meals}"  th:text="${nrOfMeals}"></option>
+                    </select>
+                </div>
+            </td>
+            <td>
+                <!--<a class="btn btn-danger" th:href="@{/set-parameters}">
+                    <i class="bi bi-trash-fill"></i> Reset Parameters</a>-->
+
+                <button type="submit" class="btn btn-outline-success">
+                    <i class="bi bi-arrow-left-square-fill"></i> SEND SETTINGS
+                </button>
+            </td>
+        </tr>
+        <!--
+
+                <input type="hidden" th:field="*{getCreatedAt()}" />
+                <input type="hidden" th:field="*{getUpdatedAt()}" />
+-->
+        </form>
+
+        </tbody>
+    </table>
+
+    <!--Table with the simulation parameters gets Rendered from external Fragment-->
+    <hr />
+    <div th:replace="~{f-simulation-table.html :: table}"></div>
+
+    <hr />
+    <!-- HERE COMES THE SIMULATION BUTTON !-->
+    <a class="btn btn-success" th:href="@{/runSimulation}">
+        <i class="bi bi-play-fill"></i>  Run Simulation</a>
+    <!-- HERE COMES THE GRAPH PLOT !-->
+    <button class="btn btn-outline-danger" id="showPlotButton">Show Plot</button>
+    <div id="plotContainer" style="display:none;">
+        <canvas id="bloodSugarPlot"></canvas>
+    </div>
+
+    <hr />
+
+
+
+    <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+             <th>Actions</th>
+            <th>Id</th>
+            <th>Description</th>
+            <th>Is Complete</th>
+            <th>Created At</th>
+            <th>Updated At</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${todoItems}" th:class="${item.isComplete} ? 'alert alert-success' : 'alert alert-warning'">
+            <td>
+                <div class="btn btn-group-sm" role="group">
+                    <a class="btn btn-info" th:href="@{/edit/{id}(id=${item.id})}">
+                        <i class="bi bi-pencil-fill"></i> Edit</a>
+                    <a class="btn btn-danger" th:href="@{/delete/{id}(id=${item.id})}">
+                        <i class="bi bi-trash-fill"></i> Delete</a>
+                </div>
+            </td>
+            <td th:text="${item.id}"></td>
+            <td th:text="${item.description}"></td>
+            <td>
+                <span th:if="${item.isComplete} == true" th:text="Yes" />
+                <span th:unless="${item.isComplete} == false" th:text="No" />
+            </td>
+            <td th:text="${item.getCreatedAt()}"></td>
+            <td th:text="${item.getUpdatedAt()}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+
+    <p><a class="btn btn-outline-success" href="/create-todo">
+        <i class="bi bi-plus-square-fill"></i> Create a Todo</a>
+    </p>
+    <form action="/csvFile" method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="csvFile" class="form-label">CSV File</label>
+            <input class="form-control" type="file" id="csvFile" name="csvFile">
+        </div>
+
+            <button type="submit" name="action" value="edit" class="btn btn-primary mb-5 me-2" >Edit </button>
+            <button type="submit" name="action" value="import" class="btn btn-success mb-5 me-2">Import </button>
+            <button type="submit" name="action" value="delete" class="btn btn-danger mb-5 me-2">Delete </button>
+    </form>
+    <div align="centered">
+        <a class="btn btn-outline-danger" th:href="@{/displayLineGraph}">
+        <strong>Line Charts</strong></a>
+    </div>
+
+</div>
+
+
+<script th:inline="javascript">
+    var testdataErrors = {
+    0: {plus: 0.5, minus: 0.3},
+    1: {plus: 0.4, minus: 0.2},
+    // Continue for each data point
+};
+
+    var BGdata = [[${mockBG}]];
+    var simtime = [[${mocktime}]];
+    var insulindata = [[${insulinData}]];
+    var insulintime = [[${insulinTime}]];
+    var bloodSugarUpper = [[${BGUpperData}]];
+    var bloodSugarLower =  [[${BGLowerData}]];
+    var mealdata = [[${mealData}]];
+
+
+
+    document.getElementById("showPlotButton").addEventListener("click", function() {
+        // Toggle the display of the plot container
+        var container = document.getElementById("plotContainer");
+        container.style.display = container.style.display === "none" ? "block" : "none";
+
+        // Example data, replace with actual data fetching logic if needed
+        var data = {
+            labels: simtime, // Example time points
+
+            datasets: [{
+                label: 'Blood Sugar',
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: BGdata, // Example blood sugar values
+
+            },
+              {
+        label: 'Blood Sugar Upper Bound',
+        borderColor: 'rgba(255, 99, 132, 0.5)',
+        data: bloodSugarUpper,
+        borderDash: [5, 5] // Optional: makes the line dashed
+    },
+    {
+        label: 'Blood Sugar Lower Bound',
+        borderColor: 'rgba(255, 99, 132, 0.5)',
+        data: bloodSugarLower,
+        borderDash: [5, 5] // Optional: makes the line dashed
+    },
+            {
+                label: 'Insulin Dose',
+                backgroundColor: 'rgb(54, 162, 235)',
+                borderColor: 'rgb(54, 162, 235)',
+                data: insulindata, // Example insulin doses
+            },
+            {
+                label: 'CHO Dose',
+                backgroundColor: 'rgb(54, 162, 180)',
+                borderColor: 'rgb(54, 162, 200)',
+                data: mealdata, // Example insulin doses
+            }]
+        };
+
+        // Initialize the plot with Chart.js
+        var ctx = document.getElementById('bloodSugarPlot').getContext('2d');
+        new Chart(ctx, {
+            type: 'line', // Change to 'bar', 'line', etc. based on your needs
+            data: data,
+            options: {}
+        });
+    });
+
+    /*]]>*/
+</script>
+
+
+
+<script th:src="@{/webjars/bootstrap/5.2.2/js/bootstrap.min.js}"></script>
+</body>
+</html>

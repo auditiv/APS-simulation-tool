@@ -1,0 +1,188 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.2/css/bootstrap.min.css}" />
+</head>
+<body>
+<div class="container">
+  <div class="row mt-5">
+    <div class="col-2" >
+      <p>
+        <a class="btn btn-outline-success" href="/">
+          <i class="bi bi-arrow-left-square-fill"></i> Back
+        </a>
+      </p>
+    </div>
+
+    <!--<form action="#" th:action="@{/update-parameters/{id}(id=${paramView.id})}" th:object="${paramView}" method="post">
+
+
+        <div th:each="p, rowStat : *{virtualPatientParams}">
+          <input type="text" th:field="*{virtualPatientParam[__${rowStat.index}__].name}" placeholder="Parameter Name"/>
+          <input type="number" th:field="*{virtualPatientParam[__${rowStat.index}__].value}" placeholder="Parameter Value"/>
+          &lt;!&ndash; Assuming type is a string you want to edit &ndash;&gt;
+          <input type="text" th:field="*{virtualPatientParam[__${rowStat.index}__].type}" placeholder="Parameter Type"/>
+        </div>
+
+      <input type="submit" th:value="Save" />
+    </form>-->
+
+
+    <h2>SET THE PARAMTERS FOR THE SIMULATION</h2>
+      <table class="table table-bordered table-striped">
+        <form action="#" th:action="@{/update-parameters/{id}(id=${paramView.id})}" th:object="${paramView}" method="POST">
+
+          <thead>
+          <tr>
+            <th>Virtual Patient</th>
+            <th>Algorithms</th>
+            <th>Sensor</th>
+            <th>Insulin Pump</th>
+            <th>Meals</th>
+            <th>Simulation Generals</th>
+          </tr>
+          </thead>
+          <tbody>
+
+
+          <tr>
+            <td>
+              <!--PARAMETERS VIRTUAL PATIENT-->
+              <div th:each=" p, stat  : *{virtualPatientParams}">
+                <div>
+                  <label th:for="${p}" th:text="|${p.name}: (${p.unit}) |" th:title="${p.description}">Parameter Name</label>
+                  <input type="hidden" th:field="*{virtualPatientParams[__${stat.index}__].name}" />
+                  <input type="hidden" th:field="*{virtualPatientParams[__${stat.index}__].type}" />
+                  <input type="hidden" th:field="*{virtualPatientParams[__${stat.index}__].description}" />
+                  <input type="hidden" th:field="*{virtualPatientParams[__${stat.index}__].unit}" />
+
+
+                  <input type="number" th:field="*{virtualPatientParams[__${stat.index}__].value}" th:attr="step=${p.type} == 'Integer' ? '1' : '0.01'" />
+                </div>
+              </div>
+
+            </td>
+
+            <td>
+              <!-- PARAMETERS ALGORITHM -->
+                <div th:each=" p, stat : *{algorithmParams}">
+                    <div>
+                      <label th:for="${p}" th:text="|${p.name}: (${p.unit}) |" th:title="${p.description}">Parameter Name</label>
+                      <input type="hidden" th:field="*{algorithmParams[__${stat.index}__].name}" />
+                      <input type="hidden" th:field="*{algorithmParams[__${stat.index}__].type}" />
+                      <input type="hidden" th:field="*{algorithmParams[__${stat.index}__].description}" />
+                      <input type="hidden" th:field="*{algorithmParams[__${stat.index}__].unit}" />
+
+
+
+                      <input type="number" th:field="*{algorithmParams[__${stat.index}__].value}" th:attr="step=${p.type} == 'Integer' ? '1' : '0.01'" />
+                    </div>
+                  </div>
+            </td>
+            <td>
+              <!-- PARAMETERS SENSOR -->
+                  <div th:each=" p, stat : *{sensorParams}">
+                    <div>
+                    <label th:for="${p}" th:text="|${p.name}: (${p.unit}) |" th:title="${p.description}">Parameter Name</label>
+                    <input type="hidden" th:field="*{sensorParams[__${stat.index}__].name}" />
+                    <input type="hidden" th:field="*{sensorParams[__${stat.index}__].type}" />
+                      <input type="hidden" th:field="*{sensorParams[__${stat.index}__].description}" />
+                      <input type="hidden" th:field="*{sensorParams[__${stat.index}__].unit}" />
+
+
+                    <input type="number" th:field="*{sensorParams[__${stat.index}__].value}" th:attr="step=${p.type} == 'Integer' ? '1' : '0.01'" />
+                    </div>
+                  </div>
+
+            </td>
+            <td>
+              <!-- PARAMETERS INSULIN PUMP-->
+              <div th:each=" p, stat : *{insulinPumpParams}">
+                <div>
+                <label th:for="${p}" th:text="|${p.name}: (${p.unit}) |" th:title="${p.description}">Parameter Name</label>
+                <input type="hidden" th:field="*{insulinPumpParams[__${stat.index}__].name}" />
+                <input type="hidden" th:field="*{insulinPumpParams[__${stat.index}__].type}" />
+                  <input type="hidden" th:field="*{insulinPumpParams[__${stat.index}__].description}" />
+                  <input type="hidden" th:field="*{insulinPumpParams[__${stat.index}__].unit}" />
+
+                <input type="number" th:field="*{insulinPumpParams[__${stat.index}__].value}" th:attr="step=${p.type} == 'Integer' ? '1' : '0.01'" />
+              </div>
+              </div>
+            </td>
+            <td>
+              <!--MEAL-PARAMETERS -->
+              <div th:each=" p, stat : *{mealsParams}">
+                <div>
+                  <label th:for="${p}" th:text="|${p.name}: (${p.unit}) |" th:title="${p.description}">Parameter Name</label>
+                  <input  type="hidden"  th:field="*{mealsParams[__${stat.index}__].name}" />
+                  <input  type="hidden" th:field="*{mealsParams[__${stat.index}__].type}" />
+                  <input type="hidden" th:field="*{mealsParams[__${stat.index}__].description}" />
+                  <input type="hidden" th:field="*{mealsParams[__${stat.index}__].unit}" />
+                  <!-- Shown input fields of MealParameter type -->
+                  <input type="time" th:field="*{mealsParams[__${stat.index}__].startTime}" />
+                  <br>
+                  <label th:for="${p}" th:text="| (${p.unit2}) |" ></label>
+
+                  <input type="number" th:field="*{mealsParams[__${stat.index}__].carbs}" th:attr="step='1'" />
+
+                </div>
+              </div>
+
+            </td>
+            <td>
+              <!--PARAMETERS GENERAL WITH TIME-PARAMETERS-->
+              <div th:each="p, stat : *{generalParams}">
+                <div>
+                  <label th:for="${p}" th:text="|${p.name}: (${p.unit}) |" th:title="${p.description}">Parameter Name</label>
+                  <input type="hidden" th:field="*{generalParams[__${stat.index}__].name}" />
+                  <input type="hidden" th:field="*{generalParams[__${stat.index}__].type}" />
+                  <input type="hidden" th:field="*{generalParams[__${stat.index}__].description}" />
+                  <input type="hidden" th:field="*{generalParams[__${stat.index}__].unit}" />
+
+                  <!-- Differentiating input types based on parameter type -->
+                  <input th:if="${p.type == 'Time'}" type="time" th:field="*{generalParams[__${stat.index}__].clockTime}" />
+                  <input th:if="${p.type == 'Double'}" type="number" th:field="*{generalParams[__${stat.index}__].value}" th:attr="step=0.01" />
+                  <input th:if="${p.type == 'Integer'}" type="number" th:field="*{generalParams[__${stat.index}__].value}" th:attr="step=1" />
+                </div>
+              </div>
+
+              <!--&lt;!&ndash;PARAMETERS GENERALS&ndash;&gt;
+              <div th:each=" p, stat : *{generalParams}">
+                <div>
+                  <label th:for="${p}" th:text="|${p.name}: (${p.unit}) |" th:title="${p.description}">Parameter Name</label>
+                  <input  type="hidden"  th:field="*{generalParams[__${stat.index}__].name}" />
+                  <input  type="hidden" th:field="*{generalParams[__${stat.index}__].type}" />
+                  <input type="hidden" th:field="*{generalParams[__${stat.index}__].description}" />
+                  <input type="hidden" th:field="*{generalParams[__${stat.index}__].unit}" />
+
+                  <input type="number" th:field="*{generalParams[__${stat.index}__].value}" th:attr="step=${p.type} == 'intParameter' ? '1' : '0.01'" />
+                </div>
+              </div>-->
+
+            </td>
+
+
+            <td>
+              <!--Display Buttons to save Parameter -->
+              <a class="btn btn-danger" th:href="@{/create-sim}">
+                <i class="bi bi-trash-fill"></i> Set Parameters</a>
+
+              <!-- SAVE changes to Repository -->
+              <button type="submit" class="btn btn-outline-success">
+                <i class="bi bi-arrow-left-square-fill"></i> SAVE SETTINGS
+              </button>
+            </td>
+          </tr>
+
+          </form>
+      </table>
+    </div>
+
+  </div>
+</div>
+<script th:src="@{/webjars/bootstrap/5.2.2/js/bootstrap.min.js}"></script>
+</body>
+</html>
