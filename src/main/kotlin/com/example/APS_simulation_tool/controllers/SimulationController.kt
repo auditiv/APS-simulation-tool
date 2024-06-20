@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import kotlin.math.absoluteValue
 
-
+/**
+ * This class implements the Controller with its unique purpose to execute the simulation and pass the data to the
+ * index page (HomeController)
+ */
 @Controller
 class SimulationController(@Autowired var parametersService: ParametersService, var simService: ComponentsService){
     @GetMapping("/runSimulation")

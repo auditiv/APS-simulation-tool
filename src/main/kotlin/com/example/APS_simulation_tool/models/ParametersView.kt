@@ -1,8 +1,9 @@
 package com.example.APS_simulation_tool.models
 
-/*enum class AlgorithmPart(val str:String){
-    ALGORITHM("0ref")
-}*/
+/**
+ * This class was mainly designed to make it easier to get the Data to the Front-End
+ * using the thymeleaf extension.
+ */
 
 
 class ParametersView(

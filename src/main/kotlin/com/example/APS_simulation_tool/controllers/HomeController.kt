@@ -1,7 +1,6 @@
 package com.example.APS_simulation_tool.controllers
 
 import com.example.APS_simulation_tool.services.ComponentsService
-import com.example.APS_simulation_tool.services.TodoItemService
 import com.opencsv.CSVReaderBuilder
 import org.hibernate.query.sqm.tree.SqmNode.log
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,16 +15,16 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.Reader
 
-
+/**
+ * This Controller has the purpose to handle all the datapassing to the index.html view.
+ * Which is the loading and returning of the website for the root-url :/
+ */
 @Controller
-class HomeController(@Autowired var todoItemService: TodoItemService, var simService: ComponentsService) {
-
-
+class HomeController(@Autowired var simService: ComponentsService) {
 
     @GetMapping("/") //makes GET REQUEST
     public fun index(redirectAttributes: RedirectAttributes): ModelAndView{
         var modelAndView: ModelAndView = ModelAndView("index")
-        modelAndView.addObject("todoItems", this.todoItemService.getAll())
         modelAndView.addObject("simulations", this.simService.getAll())
         modelAndView.addObject("algorithms", listOf("BasicBasal","Others"))
         modelAndView.addObject("sensors", listOf("Ideal-CGM-Sensor", "Others"))
@@ -57,40 +56,4 @@ class HomeController(@Autowired var todoItemService: TodoItemService, var simSer
 
             return modelAndView
         }
-
-    @PostMapping("/csvFile")
-    fun importCSV(@RequestParam csvFile: MultipartFile): String {
-        log.info("File Name: " + csvFile.originalFilename)
-        log.info("File Size: " + csvFile.size)
-
-        val reader: Reader = InputStreamReader(csvFile.inputStream, "UTF-8")
-        var bufferedReader = BufferedReader(reader)
-        //bufferedReader.lines() // TODO: something with the buffered lines
-
-        // Parse CSV data
-        val csvReader = CSVReaderBuilder(reader).build()
-        val rows = csvReader.readAll()
-
-        // Analyze data...
-        val allItems = todoItemService.buildToDoFromCSVArray(rows)
-
-
-        // Analyze data...
-        for(item in allItems){
-            todoItemService.save(item)
-        }
-        log.info( "Processed " + allItems[0].toString())
-        return "redirect:/"
-
-
-
-
-        // Analyze data...
-
-
-
-
     }
-
-
-}

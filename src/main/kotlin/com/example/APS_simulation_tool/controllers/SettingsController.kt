@@ -16,7 +16,8 @@ import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
 
 /**
- * This controller handles all interactions between GUI (client) and the parameters (DB) for each simulation
+ * This controller handles all interactions between GUI (client) and the parameters (ParametersTable)  and
+ * components (ComponentsTable) for each instance.
  */
 @Controller
 class SettingsController(
@@ -59,7 +60,6 @@ class SettingsController(
         return url
     }
     /**
-     *
      * Redirects to the ParametersForm, ensuring to manipulate the values of the correct entry (chosen by id)
      *
      */
@@ -113,10 +113,4 @@ class SettingsController(
     return "redirect:/"
     }
 
-
-
-    @GetMapping("/test")
-    fun getHome(): String? {
-        return "test.html"
-    }
-    }
+}

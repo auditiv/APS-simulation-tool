@@ -5,12 +5,10 @@ import jakarta.persistence.Id
 import jakarta.persistence.Lob
 import jakarta.persistence.Table
 
-/*enum class AlgorithmPart(val str:String){
-    ALGORITHM("0ref")
-}*/
-
-
-
+/**
+ * This class models the DB of the parameters in a similary way as the ComponentsTable
+ * But the type here in each entry is thought to be JSON-String.
+ */
 @Entity
 @Table(name = "parameters")
 class ParametersTable(
