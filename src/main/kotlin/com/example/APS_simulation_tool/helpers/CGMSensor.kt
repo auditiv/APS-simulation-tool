@@ -18,7 +18,11 @@ class CGMSensor(var samplingRateMinutes:Int,
         }
     }
     fun injectNoise(value:Double):Double{
-        return value + Random.nextDouble(-errorRange, errorRange)
+        if (errorRange != 0.0){ //
+        return value + Random.nextDouble(-errorRange, errorRange)}
+        else{
+            return value
+        }
     }
 
 }

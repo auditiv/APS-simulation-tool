@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
+import kotlin.math.absoluteValue
 
 
 @Controller
@@ -25,7 +26,7 @@ class SimulationController(@Autowired var parameterService: ParameterService, va
                 return "redirect:/"
             }
 
-            if(simService.getLineById(simulation.id).readyToPlot) {// check if it should be plotted
+            if(simService.getLineById(simulation.id).readyToPlot) {// check if entry should be plotted
                 listofParaViewFromDB.add(ParametersView(
                         SerializeHelper.deserializeToListOfParameter(simulation.virtualPatientParams),
                         SerializeHelper.deserializeToListOfParameter(simulation.algorithmParams),
@@ -59,7 +60,7 @@ class SimulationController(@Autowired var parameterService: ParameterService, va
         var sensorMap = PatientHelper().createHashMapFromPatientParameterList(listofParaViewFromDB[0].sensorParams!!)
         var sensor = CGMSensor(sensorMap.getValue("samplingtime").toInt(), sensorMap.getValue("error_range"))
         // CREATE THE SIMULATION:
-        //mealsmap
+        // mealsmap
         var mealSchedule = PatientHelper().createMealsMapFromMealParameterList(listofParaViewFromDB[0].mealsParams!!)
         var sim = Simulation(patient = patient,
                 action = Action(0.0,0.0), // actions should be working fine!
@@ -69,9 +70,8 @@ class SimulationController(@Autowired var parameterService: ParameterService, va
                 mealSchedule = mealSchedule, // also here load from BD
                 startTime = startTime, // load in from params.general
                 endTime = endTime)  // load in from params.general
-        //ASSERT
+        // run the simulation
         sim.discreteSimulation()
-        // run them and store them in a Huge Dictionary
 
         // get the calculated Data:
         var mockBG = sim.BGMap.values.toList() // len = 10
@@ -99,8 +99,8 @@ class SimulationController(@Autowired var parameterService: ParameterService, va
         //add lower bound
         var BgLowerData = mutableListOf<Double>()
         for (value in mockBG){
-            BgUpperData.add(value+2*sensor.errorRange)
-            BgLowerData.add(value-2*sensor.errorRange)
+            BgUpperData.add(value+sensor.errorRange.absoluteValue)
+            BgLowerData.add(value-sensor.errorRange.absoluteValue)
         }
 
         // add to model

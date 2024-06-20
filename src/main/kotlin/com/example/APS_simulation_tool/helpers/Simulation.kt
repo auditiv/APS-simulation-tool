@@ -16,10 +16,18 @@ class Simulation(
 
         ){
     fun discreteSimulation() {
-        var currentTime = startTime
-        //duration in minutes
-        val duration = java.time.Duration.between(startTime, endTime).toMinutes().toInt() //min
+        var currentTime = patient.startTime
+        // check iff there are already some Meals ready
+        val carbs = getCarbsFromSchedule(currentTime, mealSchedule)
+        patient.carbsStorage += carbs  // Store carbs
+        // get first value before simulation starts
+        sensor.returnOnlyValuesInGivenFrequency(Pair(currentTime, sensor.injectNoise(patient.observation(patient.initialConditions[12]))),BGMap) //go through glucose monitoring
 
+        InsulinMap.put(currentTime, action.insulin)
+        MealMap.put(currentTime, this.action.CHO)
+
+        //duration in minutes
+        val duration = java.time.Duration.between(startTime.plusMinutes(1), endTime).toMinutes().toInt() // shift by 1 min forward
         var minCounter = 0 //min counter
         while (minCounter < duration) {
             // Simulation step (assuming method exists in T1DPatient)
@@ -27,8 +35,9 @@ class Simulation(
             println("BG value: $BG at time: $time")
             println("Action.CHO: ${action.CHO} with insulin: ${action.insulin}")
             // STORE THE BG : TIME && ACTION.INSULIN : TIME
+            // Store BG values inject noise and sampling time
+            sensor.returnOnlyValuesInGivenFrequency(Pair(time, sensor.injectNoise(BG)),BGMap) //go through glucose monitoring
 
-            sensor.returnOnlyValuesInGivenFrequency(Pair(time, BG),BGMap) //go through CGM
             InsulinMap.put(time, action.insulin)
             MealMap.put(time, this.action.CHO)
 
@@ -41,8 +50,8 @@ class Simulation(
 
             // Calculate insulin (assuming method exists)
             val insulin = algorithm.getInsulinFromAlgorithm(time, minCounter)
-
-            action.insulin = insulin
+            // inject noise for insulin dose
+            action.insulin = insulinPump.injectNoise(insulin)
             action.CHO = patient.prepareNextMeal()  // Prepare the next meal (assuming method exists)
 
             // Increment the simulation minute counter

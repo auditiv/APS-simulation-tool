@@ -11,6 +11,11 @@ class InsulinPump(var errorRange: Double){
         return value
     }
     fun injectNoise(value: Double): Double {
-        return value + Random.nextDouble(-errorRange, errorRange)
+        if (value == 0.0) {
+            return 0.0
+        }
+        else {
+            return value + Random.nextDouble(-errorRange, errorRange)
+        }
     }
 }

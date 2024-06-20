@@ -1,7 +1,6 @@
 package com.example.APS_simulation_tool.services
 
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 import com.example.APS_simulation_tool.helpers.SerializeHelper
 import com.example.APS_simulation_tool.models.*
 import com.example.APS_simulation_tool.repositories.SettingParametersRepository
@@ -27,7 +26,7 @@ class ParameterService(@Autowired var settingParametersRepo: SettingParametersRe
      */
     fun createDefaultParameters(settings: SimulationSettings): Parameters {
         // create parameters for UVA/Padova:
-        var parametersUvaPadova = listOf(Parameter("Gpeq", 100.0, "Double", "mg/dl", "blood glucose concentration in homeostasis"))
+        var parametersUvaPadova = emptyList<Parameter>()
                 if (settings.virtualPatient == "UVA/Padova") {
                     parametersUvaPadova = listOf(
 
@@ -95,10 +94,10 @@ class ParameterService(@Autowired var settingParametersRepo: SettingParametersRe
         }
 
 
-        // create parameters for algorithm 0ref
-        var parametersOref = listOf(Parameter("Other", 1.509, "Double", "", "hypoglycemia risk function parameter gamma"))
+        // create parameters for algorithm basic basal or oref0
+        var parametersAlgorithm = listOf(Parameter("basal insulin", 1.509, "Double", "mg", "Basal Insulin Dose"))
         if (settings.algorithm == "oref0"){
-            parametersOref = listOf(
+            parametersAlgorithm = listOf(
                     Parameter("current_basal", 0.7, "Double", "U/h", description = "default basal rate"),
                     Parameter("sens", 50.0, "Double", "(mg/dl)/U", description =  " insulin sensitivity"),
                     Parameter("dia", 6.0, "Double", "h", description = "duration of insulin action"),
@@ -113,16 +112,18 @@ class ParameterService(@Autowired var settingParametersRepo: SettingParametersRe
 
         }
         // create parameters for IDEAL Sensor:
-        val parametersSensor = listOf(Parameter("samplingtime", 5, "Integer", "min", "CGM sampling time interval in minutes"),
-                Parameter("error_range", 5, "Double", "Int", "Error Range of each measurement"))
+        var parametersSensor = emptyList<Parameter>()
+        if (settings.sensor== "Ideal-CGM-Sensor") {
+            parametersSensor = listOf(Parameter("samplingtime", 5, "Integer", "min", "CGM sampling time interval in minutes"),
+                    Parameter("error_range", 3.5, "Double", "error, double", "Error Range of each measurement"))
+        }
         // create parameters for Insulin Pump
-
-        var parametersInsulinPump = listOf(Parameter("rgamma", 1.509, "Double", "ml", "INSULIN PUMP"))
-        if (settings.insulinPump== "IdealInsulinPump"){
+        var parametersInsulinPump = emptyList<Parameter>()
+        if (settings.insulinPump== "Ideal-Insulin-Pump"){
             parametersInsulinPump = listOf(
                     //Parameter(name = "bias_basal", value = 0, type = "Double", unit = "", description = "empty"),
                     //Parameter(name = "relerr_basal", value = 0, type = "Double", unit = "",  description = "empty"),
-                    Parameter(name = "abserr_basal", value = 0, type = "Double", unit = "",  description = "empty"),
+                    Parameter(name = "abserr_basal", value = 0.5, type = "Double", unit = "",  description = "injection error, must be greater than zero"),
                     //Parameter(name = "bias_bolus", value = 0, type = "Double", unit = "",  description = "empty"),
                     //Parameter(name = "relerr_bolus", value = 0, type = "Double", unit = "",  description = "empty"),
                     //Parameter(name = "abserr_bolus", value = 0, type = "Double", unit = "",  description = "empty"),
@@ -133,22 +134,33 @@ class ParameterService(@Autowired var settingParametersRepo: SettingParametersRe
             )
         }
         // create parameters for Meals
-        val parametersMeals = listOf(MealParameter("Breakfast", "First Meal Time of the Day in carbs","carbs in grams", LocalTime.of(8,0), carbs = 50),
-                MealParameter("Lunch", "Main Meal Time of the Day in carbs","carbs in grams", LocalTime.of(12,0), carbs = 50),
-                MealParameter("Dinner", "First Meal Time of the Day in carbs","carbs in grams", LocalTime.of(8,0), carbs = 50)
-                )
+        var parametersMeals = emptyList<Parameter>()
+        if (settings.meals == "1") {
+            parametersMeals = listOf(MealParameter("Breakfast", "First Meal Time of the Day in carbs", "carbs in grams", LocalTime.of(8, 0), carbs = 50),
+            )}
+        if (settings.meals == "2") {
+            parametersMeals = listOf(MealParameter("Breakfast", "First Meal Time of the Day in carbs", "carbs in grams", LocalTime.of(8, 0), carbs = 50),
+                    MealParameter("Lunch", "Main Meal Time of the Day in carbs", "carbs in grams", LocalTime.of(12, 0), carbs = 50),
+            )}
+        if (settings.meals == "3") {
+            parametersMeals = listOf(MealParameter("Breakfast", "First Meal Time of the Day in carbs", "carbs in grams", LocalTime.of(8, 0), carbs = 50),
+                    MealParameter("Lunch", "Main Meal Time of the Day in carbs", "carbs in grams", LocalTime.of(12, 0), carbs = 50),
+                    MealParameter("Dinner", "Last Meal Time of the Day in carbs", "carbs in grams", LocalTime.of(8, 0), carbs = 50)
+            )
+        }
         // create parameters for General Settings
         // get local time for testing.
         val currentTime = LocalTime.of(8, 0)
+        val endTime = LocalTime.of(16, 0)
 
 /*        val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
         val current = currentTime.format(formatter)*/
         val parametersGeneral = listOf(
                 TimeParameter("Simulation Start",description = "Starting Time of the Simulation", clockTime = currentTime),
-                TimeParameter("Simulation End",description = "Ending Time of Simu", clockTime = currentTime))
+                TimeParameter("Simulation End",description = "Ending Time of Simu", clockTime = endTime))
         // Serialize all data
         val serialPatient = SerializeHelper.serializeListOfParameter(parametersUvaPadova)
-        val serialAlgo = SerializeHelper.serializeListOfParameter(parametersOref)
+        val serialAlgo = SerializeHelper.serializeListOfParameter(parametersAlgorithm)
         val serialSensor = SerializeHelper.serializeListOfParameter(parametersSensor)
         val serialInsu = SerializeHelper.serializeListOfParameter(parametersInsulinPump)
         val serialMeal = SerializeHelper.serializeListOfParameter(parametersMeals)

@@ -15,7 +15,9 @@ import org.springframework.ui.Model
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
 
-
+/**
+ * This controller handles all interactions between GUI (client) and the parameters (DB) for each simulation
+ */
 @Controller
 class SettingsController(
         @Autowired var simService:SimulationService,
@@ -24,7 +26,8 @@ class SettingsController(
 )
 {
     /**
-     *
+     * this method updates the values entered into the edit-parameters-page
+     * and gives the new values into the DB
      */
 
     @PostMapping("/update-parameters/{id}")
@@ -43,20 +46,7 @@ class SettingsController(
         paraService.saveParameters(temp, id)
         return "redirect:/" // Redirect to prevent duplicate submissions or show updated parameters
     }
-    /*fun updateParametersById(@PathVariable("id") id: Long, @Valid simUpdate: HashMap<String, List<Parameter>?>, result:BindingResult, model: Model):String{
-        // create new Parameters Before updateing:
-        *//*var temp: Parameters = Parameters(simUpdate.algorithmParams,
-                simUpdate.sensorParams,
-                simUpdate.insulinPumpParams,
-                simUpdate.mealsParams,
-                simUpdate.generalParams,
-                (simUpdate.virtualPatientParams),
-                id)*//*
-        var temp = paraService.createDefaultParameters(id)
-        paraService.saveParameters(temp, id)
 
-        return "temp.toString()"
-    }*/
     /**
      * Deletes the specified entry (by Id) of BOTH Repos, The Simulation settings and the Parameters
      */
@@ -70,7 +60,7 @@ class SettingsController(
     }
     /**
      *
-     * Redirects to the ParametersForm ensuring to manipulate the values of the right entry by id
+     * Redirects to the ParametersForm, ensuring to manipulate the values of the correct entry (chosen by id)
      *
      */
     @GetMapping("/edit-parameters/{id}")
@@ -90,7 +80,7 @@ class SettingsController(
 
         model.addAttribute("paramView", paramView)
 
-                //since the PAramters clas takes all attributes as JSON we have to deserialize it
+                //since the Parameters class takes all attributes as JSON we have to deserialize it
         return "edit-parameters"
     }
 
@@ -101,8 +91,7 @@ class SettingsController(
     @PostMapping("/setting") // in the HTML TAG INSIDE THE  FORM THE OBJECT COMES INTO THE <form ...th:object...> EACH ATTRIBUTE IS REFERENCED BY THE <select... name="" >inside the tag
     fun saveSimulationSetting(@Valid sim: SimulationSettings, result: BindingResult, model: Model):String{ // last is the ID of the whished Simulation to be toggled
         sim.setreadyToPlot(true) // SIMULATION WILL BE PLOTTED
-        //var settings = SimulationSettings(sim.readyToPlot, sim.algorithm, sim.sensor, sim.insulinPump, sim.virtualPatient, sim.meals, sim.getId())
-        var settings = SimulationSettings(sim.readyToPlot, sim.algorithm, sim.sensor, sim.insulinPump, sim.virtualPatient, sim.meals)//, sim.getId())
+        var settings = SimulationSettings(sim.readyToPlot, sim.algorithm, sim.sensor, sim.insulinPump, sim.virtualPatient, sim.meals)
         simService.saveLine(settings)
         paraService.createDefaultParameters(settings) // create default entry of the parameters for the simulation
         var url = "redirect:/"

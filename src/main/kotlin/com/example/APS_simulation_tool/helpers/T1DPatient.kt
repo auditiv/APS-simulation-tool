@@ -133,6 +133,8 @@ class PatientHelper {
     fun createInitialConditionsForPatient():DoubleArray{
         val ys = doubleArrayOf(0.0,0.0,0.0,247.621836,176.506559902,4.697517762,0.0,97.554,97.554,3.19814917262,57.951224472,
                 93.2258828462, 250.621836)
+        // from the simglucose csv file (for adolescent patients)
+        // https://github.com/jxx123/simglucose/blob/master/simglucose/params/vpatient_params.csv
         return ys
     }
     fun createMealsMapFromMealParameterList(parameterList: List<MealParameter>):MutableMap<LocalTime, Double>{
@@ -261,7 +263,7 @@ class UVAPadovaODE(private var params: Map<String, Double>) : FirstOrderDifferen
                 kgut = kmax
             }
             //---------- Table for the ODE solver ordering--------------------------------------------------------------
-            //|-----|-----|-----|-----|-----|------|-----||-----|-----||-!!!-|
+            //|-----|-----|-----|-----|-----|------|-----||-----|-----||-BG!-|
             //|Gp(t)|Gt(t)|Ip(t)|X(t) |I'(t)|X^l(t)|Il(t)||Isc1 |Isc2 ||Gs(t)|
             //| y[3]| y[4]| y[5]|y[6] | y[7]| y[8] | y[9]||y[10]|y[11]||y[12]|
             //|_____|_____|_____|_____|_____|______|_____||_____|_____||_____|
@@ -284,7 +286,7 @@ class UVAPadovaODE(private var params: Map<String, Double>) : FirstOrderDifferen
                 Et = ke1 * (y[3] - ke2)}
             else{
                 Et = 0.0}
-            //-------------------------------------Glucose Subsystem--------------------------------------------------
+            //-------------------------------------Glucose Subsystem---------------------------------------------------
             //BG kinetics pt.I:
             yDot[3] = Math.max(EGPt, 0.0) + Rat - Uiit - Et - k1 * y[3] + k2 * y[4]
             //if( yDot[3]< 0) yDot[3] = 0.0
@@ -298,7 +300,7 @@ class UVAPadovaODE(private var params: Map<String, Double>) : FirstOrderDifferen
             yDot[4] = -Uidt + k1 * y[3] - k2*y[4]
             if (yDot[4]<0) yDot[4]=0.0
 
-            // Insulin Kinetics
+            // -----------------------------Insulin Kinetics-----------------------------------------------------------
             yDot[5] = -( m2 + m4 ) * y[5] + m1 * y[9] + (ka1 * y[10] + ka2 * y[11]) // ....+ ( Rai(t) )
 
             var It = y[5] / params.getValue("Vi")
