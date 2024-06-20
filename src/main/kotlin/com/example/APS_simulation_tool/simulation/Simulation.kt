@@ -25,9 +25,7 @@ class Simulation(
         sensor.returnOnlyValuesInGivenFrequency(Pair(currentTime, sensor.injectNoise(patient.observation(patient.initialConditions[12]))),BGMap) //go through glucose monitoring
 
         InsulinMap.put(currentTime, action.insulin)
-        sensor.returnOnlyValuesInGivenFrequency(Pair(currentTime, action.CHO),MealMap) //go through glucose monitoring
-
-        //MealMap.put(currentTime, this.action.CHO)
+        sensor.returnOnlyValuesInGivenFrequency(Pair(currentTime, action.CHO),MealMap) //go through glucose monitoring and filter some values out
 
         //duration in minutes
         val duration = java.time.Duration.between(startTime.plusMinutes(1), endTime).toMinutes().toInt() // shift by 1 min forward
@@ -45,8 +43,8 @@ class Simulation(
             InsulinMap.put(time, this.action.insulin)
 
             // Meals Carbs:
-            //sensor.returnOnlyValuesInGivenFrequency(Pair(currentTime, action.CHO),MealMap) //go through glucose monitoring
-            MealMap.put(time, this.action.CHO)
+            sensor.returnOnlyValuesInGivenFrequency(Pair(time, action.CHO),MealMap) //go through carbs ingestion and filter some values out (sample frequency of sensor)
+
             // Check if there's food in the next minute
             val nextTime = time.plusMinutes(1)
             val carbs = getCarbsFromSchedule(nextTime, mealSchedule)
@@ -64,6 +62,9 @@ class Simulation(
         }
     }
 
+    /**
+     * This function looks if a meal is scheduled and returns the amount of carbs as Double
+     */
     fun getCarbsFromSchedule(time: LocalTime, mealsMap: Map<LocalTime, Double>):Double{ //return amount of carbs && deletes taken carbs
         var carbs = 0.0
         if(mealsMap.containsKey(time)){
