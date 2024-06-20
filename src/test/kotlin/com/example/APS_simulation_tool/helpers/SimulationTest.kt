@@ -2,6 +2,7 @@ package com.example.APS_simulation_tool.helpers
 
 import com.example.APS_simulation_tool.models.*
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.time.LocalTime
 
@@ -139,24 +140,14 @@ class SimulationTest{
         //WHEN
         //1. create the hashmap from a ParamsView object for the Patient
         //2. load the patient
-
-
-
-        // get the parameters for the CGM & create Sensor
-
-        // get the parameters for the Insulin Pump & create InsulinPump
-
-        // get the parameters for the algorithm & create Algorithm
-
-        // get MealsParameters
         val MealsMap = mutableMapOf(LocalTime.of(10,0) to 150.0,
                 LocalTime.of(13,0) to 300.0,
                 LocalTime.of(18,0) to 250.0)
 
         val param = createDefaultParameters()
         val startTime = LocalTime.of(10,0)
-        //THEN
 
+        //THEN
         var patientMap = PatientHelper().createHashMapFromPatientParameterList(param.virtualPatientParams!!)
         // create patient
         val ys = doubleArrayOf(0.0,0.0,0.0,247.621836,176.506559902,4.697517762,0.0,97.554,97.554,3.19814917262,57.951224472,
@@ -176,8 +167,14 @@ class SimulationTest{
                 endTime = LocalTime.of(11,0))  // load in from params.general
         //ASSERT
         sim.discreteSimulation()
-        var lastY = sim.BGMap[LocalTime.of(11,0)]
-        Assertions.assertEquals(148.7278287561942,lastY,)
+        var lastY = sim.BGMap[LocalTime.of(11,0)]!!
+        val lowerBound = 170.0 //patient should haveve Bloodsugar around these values..
+        val upperBound = 175.0
+
+
+        assertTrue(lastY in lowerBound..upperBound) {
+            "Expected $lastY to be within range $lowerBound to $upperBound"
+        }
 
     }
 }

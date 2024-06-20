@@ -3,15 +3,15 @@ package com.example.APS_simulation_tool.services
 import java.time.LocalTime
 import com.example.APS_simulation_tool.helpers.SerializeHelper
 import com.example.APS_simulation_tool.models.*
-import com.example.APS_simulation_tool.repositories.SettingParametersRepository
+import com.example.APS_simulation_tool.repositories.ParametersRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class ParameterService(@Autowired var settingParametersRepo: SettingParametersRepository) {
+class ParametersService(@Autowired var settingParametersRepo: ParametersRepository) {
 
-    fun createParametersFromParametersView(paramView: ParametersView):Parameters{
-        return Parameters(SerializeHelper.serializeListOfParameter(paramView.virtualPatientParams),
+    fun createParametersFromParametersView(paramView: ParametersView):ParametersTable{
+        return ParametersTable(SerializeHelper.serializeListOfParameter(paramView.virtualPatientParams),
                 SerializeHelper.serializeListOfParameter(paramView.algorithmParams),
                 SerializeHelper.serializeListOfParameter(paramView.sensorParams),
                 SerializeHelper.serializeListOfParameter(paramView.insulinPumpParams),
@@ -24,7 +24,7 @@ class ParameterService(@Autowired var settingParametersRepo: SettingParametersRe
     /**
      * Here we should load from a CSV with default values for an Adult
      */
-    fun createDefaultParameters(settings: SimulationSettings): Parameters {
+    fun createDefaultParameters(settings: ComponentsTable): ParametersTable {
         // create parameters for UVA/Padova:
         var parametersUvaPadova = emptyList<Parameter>()
                 if (settings.virtualPatient == "UVA/Padova") {
@@ -95,7 +95,10 @@ class ParameterService(@Autowired var settingParametersRepo: SettingParametersRe
 
 
         // create parameters for algorithm basic basal or oref0
-        var parametersAlgorithm = listOf(Parameter("basal insulin", 1.509, "Double", "mg", "Basal Insulin Dose"))
+        var parametersAlgorithm = emptyList<Parameter>()
+        if (settings.algorithm == "BasicBasal") {
+            parametersAlgorithm = listOf(Parameter("basal insulin", 1.509, "Double", "mg", "Basal Insulin Dose"))
+        }
         if (settings.algorithm == "oref0"){
             parametersAlgorithm = listOf(
                     Parameter("current_basal", 0.7, "Double", "U/h", description = "default basal rate"),
@@ -121,18 +124,8 @@ class ParameterService(@Autowired var settingParametersRepo: SettingParametersRe
         var parametersInsulinPump = emptyList<Parameter>()
         if (settings.insulinPump== "Ideal-Insulin-Pump"){
             parametersInsulinPump = listOf(
-                    //Parameter(name = "bias_basal", value = 0, type = "Double", unit = "", description = "empty"),
-                    //Parameter(name = "relerr_basal", value = 0, type = "Double", unit = "",  description = "empty"),
                     Parameter(name = "abserr_basal", value = 0.5, type = "Double", unit = "",  description = "injection error, must be greater than zero"),
-                    //Parameter(name = "bias_bolus", value = 0, type = "Double", unit = "",  description = "empty"),
-                    //Parameter(name = "relerr_bolus", value = 0, type = "Double", unit = "",  description = "empty"),
-                    //Parameter(name = "abserr_bolus", value = 0, type = "Double", unit = "",  description = "empty"),
-                    //Parameter(name = "max_bolus", value = 100, type = "Double", unit = "",  description = "empty"),
-                    //Parameter(name = "inc_bolus", value = 0, type = "Double", unit = "",  description = "empty"),
-                    //Parameter(name = "max_basal", value = 100, type = "Double", unit = "",  description = "empty"),
-                    //Parameter(name = "inc_basal", value = 0, type = "Double", unit = "",  description = "empty")
-            )
-        }
+                    )}
         // create parameters for Meals
         var parametersMeals = emptyList<Parameter>()
         if (settings.meals == "1") {
@@ -145,9 +138,8 @@ class ParameterService(@Autowired var settingParametersRepo: SettingParametersRe
         if (settings.meals == "3") {
             parametersMeals = listOf(MealParameter("Breakfast", "First Meal Time of the Day in carbs", "carbs in grams", LocalTime.of(8, 0), carbs = 50),
                     MealParameter("Lunch", "Main Meal Time of the Day in carbs", "carbs in grams", LocalTime.of(12, 0), carbs = 50),
-                    MealParameter("Dinner", "Last Meal Time of the Day in carbs", "carbs in grams", LocalTime.of(8, 0), carbs = 50)
-            )
-        }
+                    MealParameter("Dinner", "Last Meal Time of the Day in carbs", "carbs in grams", LocalTime.of(18, 0), carbs = 50)
+            )}
         // create parameters for General Settings
         // get local time for testing.
         val currentTime = LocalTime.of(8, 0)
@@ -158,22 +150,22 @@ class ParameterService(@Autowired var settingParametersRepo: SettingParametersRe
         val parametersGeneral = listOf(
                 TimeParameter("Simulation Start",description = "Starting Time of the Simulation", clockTime = currentTime),
                 TimeParameter("Simulation End",description = "Ending Time of Simu", clockTime = endTime))
-        // Serialize all data
+        // Serialize all data (JSON-Str FORMAT TO STORE IN DB)
         val serialPatient = SerializeHelper.serializeListOfParameter(parametersUvaPadova)
         val serialAlgo = SerializeHelper.serializeListOfParameter(parametersAlgorithm)
         val serialSensor = SerializeHelper.serializeListOfParameter(parametersSensor)
         val serialInsu = SerializeHelper.serializeListOfParameter(parametersInsulinPump)
         val serialMeal = SerializeHelper.serializeListOfParameter(parametersMeals)
         val serialGeneral = SerializeHelper.serializeListOfParameter(parametersGeneral)
-        //create JSONFORMAT STRING TO STORE IN DB above!
+        //create
 
         //Storing AlgorithmParameters as JSON
-        var params = Parameters(serialPatient, serialAlgo, serialSensor, serialInsu, serialMeal, serialGeneral, settings.getId())
+        var params = ParametersTable(serialPatient, serialAlgo, serialSensor, serialInsu, serialMeal, serialGeneral, settings.getId())
         return this.settingParametersRepo.save(params)
     }
 
-    fun saveParameters(s: Parameters, id: Long): Parameters {
-        var sim = Parameters( s.virtualPatientParams, s.algorithmParams, s.sensorParams, s.insulinPumpParams,
+    fun saveParameters(s: ParametersTable, id: Long): ParametersTable {
+        var sim = ParametersTable( s.virtualPatientParams, s.algorithmParams, s.sensorParams, s.insulinPumpParams,
                 s.mealsParams, s.generalParams, id)
         return this.settingParametersRepo.save(sim)
     }
@@ -183,7 +175,7 @@ class ParameterService(@Autowired var settingParametersRepo: SettingParametersRe
 
     }
 
-    fun getParametersById(id: Long): Parameters {
+    fun getParametersById(id: Long): ParametersTable {
         return this.settingParametersRepo.findById(id).get()
 
     }

@@ -1,6 +1,6 @@
 package com.example.APS_simulation_tool.controllers
 
-import com.example.APS_simulation_tool.services.SimulationService
+import com.example.APS_simulation_tool.services.ComponentsService
 import com.example.APS_simulation_tool.services.TodoItemService
 import com.opencsv.CSVReaderBuilder
 import org.hibernate.query.sqm.tree.SqmNode.log
@@ -18,7 +18,7 @@ import java.io.Reader
 
 
 @Controller
-class HomeController(@Autowired var todoItemService: TodoItemService, var simService: SimulationService) {
+class HomeController(@Autowired var todoItemService: TodoItemService, var simService: ComponentsService) {
 
 
 

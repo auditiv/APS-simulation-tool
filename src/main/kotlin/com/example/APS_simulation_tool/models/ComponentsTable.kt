@@ -13,8 +13,8 @@ import jakarta.persistence.*
  */
 
 @Entity
-@Table(name = "sim_settings")
-class SimulationSettings(
+@Table(name = "components")
+class ComponentsTable(
 
         var readyToPlot: Boolean = false,
         var algorithm: String = "",

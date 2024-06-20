@@ -1,12 +1,12 @@
 package com.example.APS_simulation_tool.controllers
 
 import com.example.APS_simulation_tool.helpers.SerializeHelper
-import com.example.APS_simulation_tool.models.Parameters
+import com.example.APS_simulation_tool.models.ParametersTable
 import com.example.APS_simulation_tool.models.ParametersView
-import com.example.APS_simulation_tool.models.SimulationSettings
+import com.example.APS_simulation_tool.models.ComponentsTable
 import com.example.APS_simulation_tool.models.TimeParameter
-import com.example.APS_simulation_tool.services.SimulationService
-import com.example.APS_simulation_tool.services.ParameterService
+import com.example.APS_simulation_tool.services.ComponentsService
+import com.example.APS_simulation_tool.services.ParametersService
 
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.*
  */
 @Controller
 class SettingsController(
-        @Autowired var simService:SimulationService,
+        @Autowired var simService:ComponentsService,
         //interacts with simulation settings JPA
-        @Autowired var paraService:ParameterService
+        @Autowired var paraService:ParametersService
 )
 {
     /**
@@ -52,7 +52,7 @@ class SettingsController(
      */
     @GetMapping("/delete-simulation/{id}")
     fun delete(@PathVariable("id") id: Long, model: Model): String {
-        val simSetting: SimulationSettings = simService.getLineById(id)
+        val simSetting: ComponentsTable = simService.getLineById(id)
         simService.deleteLineById(id) // delete in Simulation Repo
         paraService.deleteParameterById(id) // delete in Simulation Repo
         var url = "redirect:/"
@@ -66,14 +66,14 @@ class SettingsController(
     @GetMapping("/edit-parameters/{id}")
     fun editParameters(@PathVariable("id") id:Long, model: Model): String{
 
-        val parameters: Parameters = paraService.getParametersById(id)
+        val parametersTable: ParametersTable = paraService.getParametersById(id)
         // add parameters to ParametersView
-        var paramView = ParametersView(SerializeHelper.deserializeToListOfParameter(parameters.virtualPatientParams),
-                SerializeHelper.deserializeToListOfParameter(parameters.algorithmParams),
-                SerializeHelper.deserializeToListOfParameter(parameters.sensorParams),
-                SerializeHelper.deserializeToListOfParameter(parameters.insulinPumpParams),
-                SerializeHelper.deserializeToListOfMealParameter(parameters.mealsParams),
-                SerializeHelper.deserializeToListOfTimeParameter(parameters.generalParams),
+        var paramView = ParametersView(SerializeHelper.deserializeToListOfParameter(parametersTable.virtualPatientParams),
+                SerializeHelper.deserializeToListOfParameter(parametersTable.algorithmParams),
+                SerializeHelper.deserializeToListOfParameter(parametersTable.sensorParams),
+                SerializeHelper.deserializeToListOfParameter(parametersTable.insulinPumpParams),
+                SerializeHelper.deserializeToListOfMealParameter(parametersTable.mealsParams),
+                SerializeHelper.deserializeToListOfTimeParameter(parametersTable.generalParams),
                 id
                 )
 
@@ -89,9 +89,9 @@ class SettingsController(
      * creates a default entry with the same id in the Parameters Repo
      */
     @PostMapping("/setting") // in the HTML TAG INSIDE THE  FORM THE OBJECT COMES INTO THE <form ...th:object...> EACH ATTRIBUTE IS REFERENCED BY THE <select... name="" >inside the tag
-    fun saveSimulationSetting(@Valid sim: SimulationSettings, result: BindingResult, model: Model):String{ // last is the ID of the whished Simulation to be toggled
+    fun saveSimulationSetting(@Valid sim: ComponentsTable, result: BindingResult, model: Model):String{ // last is the ID of the whished Simulation to be toggled
         sim.setreadyToPlot(true) // SIMULATION WILL BE PLOTTED
-        var settings = SimulationSettings(sim.readyToPlot, sim.algorithm, sim.sensor, sim.insulinPump, sim.virtualPatient, sim.meals)
+        var settings = ComponentsTable(sim.readyToPlot, sim.algorithm, sim.sensor, sim.insulinPump, sim.virtualPatient, sim.meals)
         simService.saveLine(settings)
         paraService.createDefaultParameters(settings) // create default entry of the parameters for the simulation
         var url = "redirect:/"

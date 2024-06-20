@@ -2,8 +2,8 @@ package com.example.APS_simulation_tool.controllers
 
 import com.example.APS_simulation_tool.helpers.*
 import com.example.APS_simulation_tool.models.ParametersView
-import com.example.APS_simulation_tool.services.ParameterService
-import com.example.APS_simulation_tool.services.SimulationService
+import com.example.APS_simulation_tool.services.ParametersService
+import com.example.APS_simulation_tool.services.ComponentsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -13,11 +13,11 @@ import kotlin.math.absoluteValue
 
 
 @Controller
-class SimulationController(@Autowired var parameterService: ParameterService, var simService: SimulationService){
+class SimulationController(@Autowired var parametersService: ParametersService, var simService: ComponentsService){
     @GetMapping("/runSimulation")
     fun runSimulation(model: Model,  redirectAttributes: RedirectAttributes): String {
         // find IDs of all Simulations where: readyToPlot = True -> store them in a List
-        val listOfMultipleSimulationParameters = parameterService.settingParametersRepo.findAll()
+        val listOfMultipleSimulationParameters = parametersService.settingParametersRepo.findAll()
         // create Simulation for each Id with its parameters where readyToPlot is set to TRUE
         var listofParaViewFromDB = mutableListOf<ParametersView>()
         for (simulation in  listOfMultipleSimulationParameters){

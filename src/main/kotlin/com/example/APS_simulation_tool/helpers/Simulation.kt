@@ -24,7 +24,9 @@ class Simulation(
         sensor.returnOnlyValuesInGivenFrequency(Pair(currentTime, sensor.injectNoise(patient.observation(patient.initialConditions[12]))),BGMap) //go through glucose monitoring
 
         InsulinMap.put(currentTime, action.insulin)
-        MealMap.put(currentTime, this.action.CHO)
+        sensor.returnOnlyValuesInGivenFrequency(Pair(currentTime, action.CHO),MealMap) //go through glucose monitoring
+
+        //MealMap.put(currentTime, this.action.CHO)
 
         //duration in minutes
         val duration = java.time.Duration.between(startTime.plusMinutes(1), endTime).toMinutes().toInt() // shift by 1 min forward
@@ -36,13 +38,14 @@ class Simulation(
             println("Action.CHO: ${action.CHO} with insulin: ${action.insulin}")
             // STORE THE BG : TIME && ACTION.INSULIN : TIME
             // Store BG values inject noise and sampling time
-            sensor.returnOnlyValuesInGivenFrequency(Pair(time, sensor.injectNoise(BG)),BGMap) //go through glucose monitoring
+            sensor.returnOnlyValuesInGivenFrequency(Pair(time, sensor.injectNoise(BG)),BGMap) //go through glucose monitoring and filter sampling rate
+            // Insulin Dose:
+            //sensor.returnOnlyValuesInGivenFrequency(Pair(time, action.insulin),InsulinMap) //go through glucose monitoring
+            InsulinMap.put(time, this.action.insulin)
 
-            InsulinMap.put(time, action.insulin)
+            // Meals Carbs:
+            //sensor.returnOnlyValuesInGivenFrequency(Pair(currentTime, action.CHO),MealMap) //go through glucose monitoring
             MealMap.put(time, this.action.CHO)
-
-
-
             // Check if there's food in the next minute
             val nextTime = time.plusMinutes(1)
             val carbs = getCarbsFromSchedule(nextTime, mealSchedule)
@@ -52,9 +55,9 @@ class Simulation(
             val insulin = algorithm.getInsulinFromAlgorithm(time, minCounter)
             // inject noise for insulin dose
             action.insulin = insulinPump.injectNoise(insulin)
-            action.CHO = patient.prepareNextMeal()  // Prepare the next meal (assuming method exists)
 
             // Increment the simulation minute counter
+            action.CHO = patient.prepareNextMeal()
 
             minCounter += 1
         }

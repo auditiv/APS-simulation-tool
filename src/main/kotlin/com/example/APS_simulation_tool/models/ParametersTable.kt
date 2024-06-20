@@ -12,8 +12,8 @@ import jakarta.persistence.Table
 
 
 @Entity
-@Table(name = "set_parameters")
-class Parameters(
+@Table(name = "parameters")
+class ParametersTable(
         @Lob // Make storing for long strings possible
         var virtualPatientParams: String,
         @Lob
