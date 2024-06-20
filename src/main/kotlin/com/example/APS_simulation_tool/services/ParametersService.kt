@@ -7,6 +7,11 @@ import com.example.APS_simulation_tool.repositories.ParametersRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
+/**
+ * This Class implements the interface between the Controller and the repositories (DB)
+ * for the parameters of each component.
+ * Either in list<Parameter> of in JSON-Str format
+ */
 @Service
 class ParametersService(@Autowired var settingParametersRepo: ParametersRepository) {
 

@@ -13,9 +13,16 @@ import org.springframework.stereotype.Service
 @Service
 class ComponentsService(@Autowired var componentsRepo: ComponentsRepository)
 {
+    fun setAllEntriesToFalseUnlessOne(componentsRow: ComponentsTable){
+        for(item in this.componentsRepo.findAll()){
+            if (item.getId() != componentsRow.getId()){
+                item.setToFalse()
+            }
+        }
+    }
 
-    fun deleteLine(simSetting:ComponentsTable){
-        this.componentsRepo.delete(simSetting)
+    fun deleteLine(componentsRow:ComponentsTable){
+        this.componentsRepo.delete(componentsRow)
     }
 
     fun getDefault():ComponentsTable{
@@ -26,6 +33,11 @@ class ComponentsService(@Autowired var componentsRepo: ComponentsRepository)
         return componentsRepo.findAll()
     }
 
+    /**
+     * Find the entry of the DB by the ID
+     * takes: Long
+     * returns: ComponentsTable (entry)
+     */
     fun getLineById(id: Long): ComponentsTable {
         if (this.componentsRepo.existsById(id)){
             return this.componentsRepo.findById(id).get()
@@ -49,6 +61,10 @@ class ComponentsService(@Autowired var componentsRepo: ComponentsRepository)
         return this.componentsRepo.save(s)
     }
 
+    /**
+     * this function returns all stored entries from the components repository (DB)
+     * as Iterable
+     */
     fun getAll(): Iterable<ComponentsTable>{
     return this.componentsRepo.findAll()
     }

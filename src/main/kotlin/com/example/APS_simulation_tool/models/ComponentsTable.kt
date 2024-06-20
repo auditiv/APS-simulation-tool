@@ -44,5 +44,8 @@ class ComponentsTable(
     fun toggle() {
         this.setreadyToPlot(!(this.readyToPlot))
     }
+    fun setToFalse() {
+        this.setreadyToPlot(false)
+    }
 
 }

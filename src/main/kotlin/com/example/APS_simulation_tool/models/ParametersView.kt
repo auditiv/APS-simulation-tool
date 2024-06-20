@@ -2,7 +2,10 @@ package com.example.APS_simulation_tool.models
 
 /**
  * This class was mainly designed to make it easier to get the Data to the Front-End
- * using the thymeleaf extension.
+ * using the thymeleaf extension. it implements a class that holds all the attributes of all objects,
+ * necessary for the simulation as List of Parameters to them into the html file.
+ * It needs to implements the iterator function so we can iterate over the attributes as if the object of
+ * this class was a list itself.
  */
 
 

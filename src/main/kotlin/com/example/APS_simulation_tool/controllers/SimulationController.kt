@@ -18,7 +18,7 @@ import kotlin.math.absoluteValue
  * index page (HomeController)
  */
 @Controller
-class SimulationController(@Autowired var parametersService: ParametersService, var simService: ComponentsService){
+class SimulationController(@Autowired var parametersService: ParametersService, var compService: ComponentsService){
     @GetMapping("/runSimulation")
     fun runSimulation(model: Model,  redirectAttributes: RedirectAttributes): String {
         // find IDs of all Simulations where: readyToPlot = True -> store them in a List
@@ -31,7 +31,7 @@ class SimulationController(@Autowired var parametersService: ParametersService, 
                 return "redirect:/"
             }
 
-            if(simService.getLineById(simulation.id).readyToPlot) {// check if entry should be plotted
+            if(compService.getLineById(simulation.id).readyToPlot) {// check if entry should be plotted
                 listofParaViewFromDB.add(ParametersView(
                         SerializeHelper.deserializeToListOfParameter(simulation.virtualPatientParams),
                         SerializeHelper.deserializeToListOfParameter(simulation.algorithmParams),

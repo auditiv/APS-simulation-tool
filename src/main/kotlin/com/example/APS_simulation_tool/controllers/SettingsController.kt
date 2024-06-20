@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*
  */
 @Controller
 class SettingsController(
-        @Autowired var simService:ComponentsService,
+        @Autowired var compService:ComponentsService,
         //interacts with simulation settings JPA
         @Autowired var paraService:ParametersService
 )
@@ -53,8 +53,8 @@ class SettingsController(
      */
     @GetMapping("/delete-simulation/{id}")
     fun delete(@PathVariable("id") id: Long, model: Model): String {
-        val simSetting: ComponentsTable = simService.getLineById(id)
-        simService.deleteLineById(id) // delete in Simulation Repo
+        val simSetting: ComponentsTable = compService.getLineById(id)
+        compService.deleteLineById(id) // delete in Simulation Repo
         paraService.deleteParameterById(id) // delete in Simulation Repo
         var url = "redirect:/"
         return url
@@ -92,7 +92,7 @@ class SettingsController(
     fun saveSimulationSetting(@Valid sim: ComponentsTable, result: BindingResult, model: Model):String{ // last is the ID of the whished Simulation to be toggled
         sim.setreadyToPlot(true) // SIMULATION WILL BE PLOTTED
         var settings = ComponentsTable(sim.readyToPlot, sim.algorithm, sim.sensor, sim.insulinPump, sim.virtualPatient, sim.meals)
-        simService.saveLine(settings)
+        compService.saveLine(settings)
         paraService.createDefaultParameters(settings) // create default entry of the parameters for the simulation
         var url = "redirect:/"
         return url
@@ -101,13 +101,15 @@ class SettingsController(
     /**
      * Updates the chosen Simulation Settings in the Simulation Repository and
      * toggles the bool readyToPlot in order to select/deselect for plotting purposes
+     * It is only poosible to select ONE row for Simulation at a time.
      */
     @PostMapping("/update-feature")
     fun updateFeature(@RequestParam("id") id:Long, @RequestParam("readyToPlot") readyToPlot:Boolean):String {
     // Assuming a service exists that saves the state
-    var toBetoggeldEntry = simService.getLineById(id)
+    var toBetoggeldEntry = compService.getLineById(id)
         toBetoggeldEntry.toggle()
-        simService.saveExistingLine(toBetoggeldEntry)
+        compService.setAllEntriesToFalseUnlessOne(toBetoggeldEntry)
+        compService.saveExistingLine(toBetoggeldEntry)
 
     // Redirect to a confirmation page or reload the same page
     return "redirect:/"
