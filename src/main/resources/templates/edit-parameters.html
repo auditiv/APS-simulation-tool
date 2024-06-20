@@ -17,19 +17,6 @@
       </p>
     </div>
 
-    <!--<form action="#" th:action="@{/update-parameters/{id}(id=${paramView.id})}" th:object="${paramView}" method="post">
-
-
-        <div th:each="p, rowStat : *{virtualPatientParams}">
-          <input type="text" th:field="*{virtualPatientParam[__${rowStat.index}__].name}" placeholder="Parameter Name"/>
-          <input type="number" th:field="*{virtualPatientParam[__${rowStat.index}__].value}" placeholder="Parameter Value"/>
-          &lt;!&ndash; Assuming type is a string you want to edit &ndash;&gt;
-          <input type="text" th:field="*{virtualPatientParam[__${rowStat.index}__].type}" placeholder="Parameter Type"/>
-        </div>
-
-      <input type="submit" th:value="Save" />
-    </form>-->
-
 
     <h2>SET THE PARAMTERS FOR THE SIMULATION</h2>
       <table class="table table-bordered table-striped">
@@ -148,35 +135,14 @@
                   <input th:if="${p.type == 'Integer'}" type="number" th:field="*{generalParams[__${stat.index}__].value}" th:attr="step=1" />
                 </div>
               </div>
-
-              <!--&lt;!&ndash;PARAMETERS GENERALS&ndash;&gt;
-              <div th:each=" p, stat : *{generalParams}">
-                <div>
-                  <label th:for="${p}" th:text="|${p.name}: (${p.unit}) |" th:title="${p.description}">Parameter Name</label>
-                  <input  type="hidden"  th:field="*{generalParams[__${stat.index}__].name}" />
-                  <input  type="hidden" th:field="*{generalParams[__${stat.index}__].type}" />
-                  <input type="hidden" th:field="*{generalParams[__${stat.index}__].description}" />
-                  <input type="hidden" th:field="*{generalParams[__${stat.index}__].unit}" />
-
-                  <input type="number" th:field="*{generalParams[__${stat.index}__].value}" th:attr="step=${p.type} == 'intParameter' ? '1' : '0.01'" />
-                </div>
-              </div>-->
-
             </td>
-
-
             <td>
-              <!--Display Buttons to save Parameter -->
-              <a class="btn btn-danger" th:href="@{/create-sim}">
-                <i class="bi bi-trash-fill"></i> Set Parameters</a>
-
               <!-- SAVE changes to Repository -->
               <button type="submit" class="btn btn-outline-success">
                 <i class="bi bi-arrow-left-square-fill"></i> SAVE SETTINGS
               </button>
             </td>
           </tr>
-
           </form>
       </table>
     </div>
