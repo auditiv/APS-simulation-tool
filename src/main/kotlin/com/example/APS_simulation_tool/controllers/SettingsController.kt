@@ -54,8 +54,8 @@ class SettingsController(
     @GetMapping("/delete-simulation/{id}")
     fun delete(@PathVariable("id") id: Long, model: Model): String {
         val simSetting: ComponentsTable = compService.getLineById(id)
-        compService.deleteLineById(id) // delete in Simulation Repo
-        paraService.deleteParameterById(id) // delete in Simulation Repo
+        compService.deleteLineById(id) // delete in components Repo
+        paraService.deleteParameterById(id) // delete in Parameters Repo
         var url = "redirect:/"
         return url
     }

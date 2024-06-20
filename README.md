@@ -10,4 +10,10 @@ HTML-sites:
 All html files are inside the folder src/.../resources/templates .
 When the names begin with "f-" (for fragment) they are being imported into another html file.
 
+APS-Simulation:
+As Patient I used the UVA/Padova (2014) Meal Model to simulate the blood sugar of a Diabetes Type 1  Patient
+The code has been influenced od translated and simplified where possible by my from the following pip package:
+Jinyu Xie. Simglucose v0.2.1 (2018) [Online]. Available: https://github.com/jxx123/simglucose. Accessed on: 03-01-2024.
+
+Thanks for the valuable descriptions and explanations!
 
