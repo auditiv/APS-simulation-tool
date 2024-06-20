@@ -1,5 +1,7 @@
 package com.example.APS_simulation_tool.helpers
 
+import com.example.APS_simulation_tool.components.PatientHelper
+import com.example.APS_simulation_tool.components.runSimulation
 import com.example.APS_simulation_tool.models.Parameter
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test

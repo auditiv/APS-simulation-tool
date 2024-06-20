@@ -1,4 +1,4 @@
-package com.example.APS_simulation_tool.helpers
+package com.example.APS_simulation_tool.components
 
 import java.time.LocalTime
 import kotlin.random.Random

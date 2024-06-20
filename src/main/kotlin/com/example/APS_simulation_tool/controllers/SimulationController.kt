@@ -1,9 +1,11 @@
 package com.example.APS_simulation_tool.controllers
 
+import com.example.APS_simulation_tool.components.*
 import com.example.APS_simulation_tool.helpers.*
 import com.example.APS_simulation_tool.models.ParametersView
 import com.example.APS_simulation_tool.services.ParametersService
 import com.example.APS_simulation_tool.services.ComponentsService
+import com.example.APS_simulation_tool.simulation.Simulation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model

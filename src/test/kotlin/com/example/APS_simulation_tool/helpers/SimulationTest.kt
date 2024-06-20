@@ -1,7 +1,8 @@
 package com.example.APS_simulation_tool.helpers
 
+import com.example.APS_simulation_tool.components.*
 import com.example.APS_simulation_tool.models.*
-import org.junit.jupiter.api.Assertions
+import com.example.APS_simulation_tool.simulation.Simulation
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.time.LocalTime

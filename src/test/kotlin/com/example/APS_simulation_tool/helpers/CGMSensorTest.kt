@@ -1,5 +1,6 @@
 package com.example.APS_simulation_tool.helpers
 
+import com.example.APS_simulation_tool.components.CGMSensor
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.time.LocalTime

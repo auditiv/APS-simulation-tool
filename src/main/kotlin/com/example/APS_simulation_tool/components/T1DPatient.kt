@@ -1,4 +1,4 @@
-package com.example.APS_simulation_tool.helpers
+package com.example.APS_simulation_tool.components
 
 import com.example.APS_simulation_tool.models.MealParameter
 import com.example.APS_simulation_tool.models.Parameter
@@ -10,7 +10,6 @@ import org.apache.commons.math3.ode.sampling.StepHandler
 import org.apache.commons.math3.ode.sampling.StepInterpolator
 
 import java.time.*
-import kotlin.random.Random
 
 
 data class ODESolutions(
@@ -27,9 +26,9 @@ data class Action(var CHO: Double, var insulin: Double)
 class T1DPatient(
 
         var parameters: MutableMap<String,Double>,
-        var initialConditions:DoubleArray , // Initial conditions for all state components
+        var initialConditions:DoubleArray, // Initial conditions for all state components
         var currentConditions: DoubleArray = doubleArrayOf(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0),
-        val solutions:ODESolutions = ODESolutions(),
+        val solutions: ODESolutions = ODESolutions(),
         var ode: UVAPadovaODE = UVAPadovaODE(parameters), //innit with wrong parameters,
         var stepHandler: SimpleStepHandler = SimpleStepHandler(),
         var integrator: FirstOrderIntegrator = DormandPrince853Integrator(1e-7, 1.0, 1e-7, 1e-7),
@@ -86,7 +85,7 @@ class T1DPatient(
         // Re-setup the solver with updated parameters
         this.setParams(this.parameters)
 
-        integrator.integrate(ode, tStart.toDouble(), currentConditions, tStart + Companion.SAMPLE_TIME, currentConditions)
+        integrator.integrate(ode, tStart.toDouble(), currentConditions, tStart + SAMPLE_TIME, currentConditions)
         // now reduce the amount of carbs that already influenced the ODE
         this.patientEats(this.parameters.getValue("CHO").toInt())
 
