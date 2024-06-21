@@ -13,37 +13,37 @@ import jakarta.persistence.Table
 @Entity
 @Table(name = "parameters")
 class ParametersTable(
-        @Lob // Make storing for long strings possible
-        var virtualPatientParams: String,
-        @Lob
-        var algorithmParams: String,
-        var sensorParams: String,
-        @Lob
-        var insulinPumpParams: String,
-        @Lob
-        var mealsParams: String,
-        @Lob
-        var generalParams: String,
+    @Lob // Make storing for long strings possible
+    var virtualPatientParams: String,
+    @Lob
+    var algorithmParams: String,
+    var sensorParams: String,
+    @Lob
+    var insulinPumpParams: String,
+    @Lob
+    var mealsParams: String,
+    @Lob
+    var generalParams: String,
 
-        @Id open var id: Long
+    @Id open var id: Long
 
-) : Iterable<String>
-{
+) : Iterable<String> {
     private val parameterList: List<String>
         get() = listOf(
-                virtualPatientParams,
-                algorithmParams,
-                sensorParams,
-                insulinPumpParams,
-                mealsParams,
-                generalParams,
+            virtualPatientParams,
+            algorithmParams,
+            sensorParams,
+            insulinPumpParams,
+            mealsParams,
+            generalParams,
         )
 
 
-    fun getParametersId():Long{
+    fun getParametersId(): Long {
         return this.id
     }
-    override fun iterator(): Iterator<String>  {
+
+    override fun iterator(): Iterator<String> {
         return parameterList.iterator()
     }
 

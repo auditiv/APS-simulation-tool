@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository
  * Repository intefaces are necessary in order to use the H2 database with hibernate.
  */
 @Repository
-interface ComponentsRepository:JpaRepository<ComponentsTable,Long> {
+interface ComponentsRepository : JpaRepository<ComponentsTable, Long> {
 
 }

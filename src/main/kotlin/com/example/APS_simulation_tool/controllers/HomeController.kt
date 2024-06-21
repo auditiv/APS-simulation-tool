@@ -23,16 +23,16 @@ import java.io.Reader
 class HomeController(@Autowired var simService: ComponentsService) {
 
     @GetMapping("/") //makes GET REQUEST
-    public fun index(redirectAttributes: RedirectAttributes): ModelAndView{
+    public fun index(redirectAttributes: RedirectAttributes): ModelAndView {
         var modelAndView: ModelAndView = ModelAndView("index")
         modelAndView.addObject("simulations", this.simService.getAll())
-        modelAndView.addObject("algorithms", listOf("BasicBasal","Others"))
+        modelAndView.addObject("algorithms", listOf("BasicBasal", "Others"))
         modelAndView.addObject("sensors", listOf("Ideal-CGM-Sensor", "Others"))
         modelAndView.addObject("insulinPumps", listOf("Ideal-Insulin-Pump", "Others"))
         modelAndView.addObject("virtualPatients", listOf("UVA/Padova", "Others"))
-        modelAndView.addObject("meals", listOf("1", "2","3"))
+        modelAndView.addObject("meals", listOf("1", "2", "3"))
         modelAndView.addObject("sim", this.simService.getDefault())
-        modelAndView.addObject("testdata", listOf(1,2,3,4,5,6,7))
+        modelAndView.addObject("testdata", listOf(1, 2, 3, 4, 5, 6, 7))
         // for the simulation data:
         // Check if redirect attributes contain mockBG and mockTime and add them to the modelAndView
         redirectAttributes.getFlashAttributes().let {
@@ -54,6 +54,6 @@ class HomeController(@Autowired var simService: ComponentsService) {
         }
 
 
-            return modelAndView
-        }
+        return modelAndView
     }
+}

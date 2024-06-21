@@ -18,48 +18,55 @@ import kotlin.math.absoluteValue
  * index page (HomeController)
  */
 @Controller
-class SimulationController(@Autowired var parametersService: ParametersService, var compService: ComponentsService){
+class SimulationController(@Autowired var parametersService: ParametersService, var compService: ComponentsService) {
     @GetMapping("/runSimulation")
-    fun runSimulation(model: Model,  redirectAttributes: RedirectAttributes): String {
+    fun runSimulation(model: Model, redirectAttributes: RedirectAttributes): String {
         // find IDs of all Simulations where: readyToPlot = True -> store them in a List
         val listOfMultipleSimulationParameters = parametersService.settingParametersRepo.findAll()
         // create Simulation for each Id with its parameters where readyToPlot is set to TRUE
         var listofParaViewFromDB = mutableListOf<ParametersView>()
-        for (simulation in  listOfMultipleSimulationParameters){
-            if (simulation == null){
+        for (simulation in listOfMultipleSimulationParameters) {
+            if (simulation == null) {
                 println("no simulation was selected")
                 return "redirect:/"
             }
 
-            if(compService.getLineById(simulation.id).readyToPlot) {// check if entry should be plotted
-                listofParaViewFromDB.add(ParametersView(
+            if (compService.getLineById(simulation.id).readyToPlot) {// check if entry should be plotted
+                listofParaViewFromDB.add(
+                    ParametersView(
                         SerializeHelper.deserializeToListOfParameter(simulation.virtualPatientParams),
                         SerializeHelper.deserializeToListOfParameter(simulation.algorithmParams),
                         SerializeHelper.deserializeToListOfParameter(simulation.sensorParams),
                         SerializeHelper.deserializeToListOfParameter(simulation.insulinPumpParams),
                         SerializeHelper.deserializeToListOfMealParameter(simulation.mealsParams),
                         SerializeHelper.deserializeToListOfTimeParameter(simulation.generalParams),
-                        simulation.id))
+                        simulation.id
+                    )
+                )
             }
         }
         for (p in listofParaViewFromDB) {
             println(p.id)
         }
         // get general params
-        var TimesParametersMap = PatientHelper().createHashMapFromTimeParameterList(listofParaViewFromDB[0].generalParams!!)
+        var TimesParametersMap =
+            PatientHelper().createHashMapFromTimeParameterList(listofParaViewFromDB[0].generalParams!!)
         val startTime = TimesParametersMap.getValue("Simulation Start")
         val endTime = TimesParametersMap.getValue("Simulation End")
         // CREATE patient
         // Hashmap
-        var patientParametersMap = PatientHelper().createHashMapFromPatientParameterList(listofParaViewFromDB[0].virtualPatientParams!!)
+        var patientParametersMap =
+            PatientHelper().createHashMapFromPatientParameterList(listofParaViewFromDB[0].virtualPatientParams!!)
         // initial condition
         var initConditions = PatientHelper().createInitialConditionsForPatient()
-        var patient = T1DPatient(patientParametersMap,initConditions,startTime = startTime)
+        var patient = T1DPatient(patientParametersMap, initConditions, startTime = startTime)
         // CREATE Insulin Pump
-        var insulinMap = PatientHelper().createHashMapFromPatientParameterList(listofParaViewFromDB[0].insulinPumpParams!!)
+        var insulinMap =
+            PatientHelper().createHashMapFromPatientParameterList(listofParaViewFromDB[0].insulinPumpParams!!)
         var insulinPump = InsulinPump(insulinMap.getValue("abserr_basal"))
         // CREATE Algorithm
-        var algorithmMap = PatientHelper().createHashMapFromPatientParameterList(listofParaViewFromDB[0].algorithmParams!!)
+        var algorithmMap =
+            PatientHelper().createHashMapFromPatientParameterList(listofParaViewFromDB[0].algorithmParams!!)
         var algorithm = Algorithm() // here we should be able to chose between basal bolus and  oref0
         // CREATE Sensor
         var sensorMap = PatientHelper().createHashMapFromPatientParameterList(listofParaViewFromDB[0].sensorParams!!)
@@ -67,14 +74,16 @@ class SimulationController(@Autowired var parametersService: ParametersService, 
         // CREATE THE SIMULATION:
         // mealsmap
         var mealSchedule = PatientHelper().createMealsMapFromMealParameterList(listofParaViewFromDB[0].mealsParams!!)
-        var sim = Simulation(patient = patient,
-                action = Action(0.0,0.0), // actions should be working fine!
-                sensor=sensor,
-                insulinPump = insulinPump, // work through class again
-                algorithm = algorithm,
-                mealSchedule = mealSchedule, // also here load from BD
-                startTime = startTime, // load in from params.general
-                endTime = endTime)  // load in from params.general
+        var sim = Simulation(
+            patient = patient,
+            action = Action(0.0, 0.0), // actions should be working fine!
+            sensor = sensor,
+            insulinPump = insulinPump, // work through class again
+            algorithm = algorithm,
+            mealSchedule = mealSchedule, // also here load from BD
+            startTime = startTime, // load in from params.general
+            endTime = endTime
+        )  // load in from params.general
         // run the simulation
         sim.discreteSimulation()
 
@@ -88,14 +97,14 @@ class SimulationController(@Autowired var parametersService: ParametersService, 
 
         // LocalTime -> String
         var mockTimeStr = mutableListOf<String>()
-        for (time in mockTime){
+        for (time in mockTime) {
             mockTimeStr.add(time.toString())
         }
         mockTimeStr.toList()
 
         var insulinTimeStr = mutableListOf<String>()
 
-        for (time in insulinTime){
+        for (time in insulinTime) {
             insulinTimeStr.add(time.toString())
         }
         //add UpperBound
@@ -103,9 +112,9 @@ class SimulationController(@Autowired var parametersService: ParametersService, 
 
         //add lower bound
         var BgLowerData = mutableListOf<Double>()
-        for (value in mockBG){
-            BgUpperData.add(value+sensor.errorRange.absoluteValue)
-            BgLowerData.add(value-sensor.errorRange.absoluteValue)
+        for (value in mockBG) {
+            BgUpperData.add(value + sensor.errorRange.absoluteValue)
+            BgLowerData.add(value - sensor.errorRange.absoluteValue)
         }
 
         // add to model

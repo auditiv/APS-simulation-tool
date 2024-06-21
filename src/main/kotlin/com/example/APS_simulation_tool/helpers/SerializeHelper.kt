@@ -9,11 +9,12 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 
-object SerializeHelper  {
+object SerializeHelper {
     private val objectMapper = jacksonObjectMapper().apply {
         registerModule(JavaTimeModule())
         registerKotlinModule()
     }
+
     /**
      * This function takes a List<Parameter(String,Number,"Double"|"Integer")> and returns its JSON string representation
      * If an error occurs during serialization, it returns null (or you could handle it differently based on your requirements).
@@ -40,6 +41,7 @@ object SerializeHelper  {
             ""
         }
     }
+
     /**
      * This function takes a List<Parameter(String,Number,"Double"|"Integer")> and returns its JSON string representation
      * If an error occurs during serialization, it returns null (or you could handle it differently based on your requirements).
@@ -66,6 +68,7 @@ object SerializeHelper  {
             // implement Message to be logged before throw
         }
     }
+
     /**
      * This function takes a JSON string and attempts to deserialize it into a List<Pair<String, Int>>.
      * It uses Jackson's TypeReference to work around type erasure and ensure the generic types are correctly understood during deserialization. Similar to serialization, it returns null in case of an error.
@@ -79,6 +82,7 @@ object SerializeHelper  {
             // implement Message to be logged before throw
         }
     }
+
     /**
      * This function takes a JSON string and attempts to deserialize it into a List<Pair<String, Int>>.
      * It uses Jackson's TypeReference to work around type erasure and ensure the generic types are correctly understood during deserialization. Similar to serialization, it returns null in case of an error.

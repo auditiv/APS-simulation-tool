@@ -5,15 +5,15 @@ import java.time.LocalTime
 
 
 @JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.PROPERTY,
-        property = "type"
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.PROPERTY,
+    property = "type"
 )
 @JsonSubTypes(
-        JsonSubTypes.Type(value = Parameter::class, name = "Double"),
-        JsonSubTypes.Type(value = Parameter::class, name = "Integer"),
-        JsonSubTypes.Type(value = TimeParameter::class, name = "Time"),
-        JsonSubTypes.Type(value = MealParameter::class, name = "Meal")
+    JsonSubTypes.Type(value = Parameter::class, name = "Double"),
+    JsonSubTypes.Type(value = Parameter::class, name = "Integer"),
+    JsonSubTypes.Type(value = TimeParameter::class, name = "Time"),
+    JsonSubTypes.Type(value = MealParameter::class, name = "Meal")
 )
 /**
  * This class implements the class that implements the parameters.
@@ -24,12 +24,12 @@ import java.time.LocalTime
  *
  */
 open class Parameter(
-        var name: String = "",
-        var value: Number = -1,
-        @JsonProperty("type")
-        var type: String = "",
-        var unit : String = "",
-        var description: String = ""
+    var name: String = "",
+    var value: Number = -1,
+    @JsonProperty("type")
+    var type: String = "",
+    var unit: String = "",
+    var description: String = ""
 ) {
     init {
         setType()
@@ -43,10 +43,10 @@ open class Parameter(
                 is Int -> type = "Integer"   // Assigning Integer
 
             }
-        }else{
+        } else {
             if (type != "Meal")
-            type = "Time"
-            else{
+                type = "Time"
+            else {
                 type = "Meal"
             }
         }
@@ -86,16 +86,17 @@ open class Parameter(
  */
 @JsonTypeName("TimeParameter")
 class TimeParameter(
-        name: String = "",
-        description: String = "",
-        @JsonProperty("clockTime")
-        var clockTime: LocalTime = LocalTime.of(7,0)
-) : Parameter(name = name, description = description, type = "Time", unit = "HH:MM", value = -1){
+    name: String = "",
+    description: String = "",
+    @JsonProperty("clockTime")
+    var clockTime: LocalTime = LocalTime.of(7, 0)
+) : Parameter(name = name, description = description, type = "Time", unit = "HH:MM", value = -1) {
     init {
         setType()
     }
-    fun setType(){
-        if(clockTime != null){
+
+    fun setType() {
+        if (clockTime != null) {
             type = "Time"
         }
 
@@ -104,12 +105,12 @@ class TimeParameter(
 
 @JsonTypeName("MealParameter")
 class MealParameter(
-        name: String = "",
-        description: String = "",
-        var unit2: String = "grams of carbs",
-        @JsonProperty("startTime")
-        var startTime: LocalTime = LocalTime.of(7,0),
-        var carbs: Int = 50
-) : Parameter(name = name, description = description, type = "Meal", unit = "HH:MM", value = -1){
+    name: String = "",
+    description: String = "",
+    var unit2: String = "grams of carbs",
+    @JsonProperty("startTime")
+    var startTime: LocalTime = LocalTime.of(7, 0),
+    var carbs: Int = 50
+) : Parameter(name = name, description = description, type = "Meal", unit = "HH:MM", value = -1) {
 
 }

@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class APSSimulationApplication
 
 fun main(args: Array<String>) {
-	runApplication<APSSimulationApplication>(*args)
+    runApplication<APSSimulationApplication>(*args)
 }

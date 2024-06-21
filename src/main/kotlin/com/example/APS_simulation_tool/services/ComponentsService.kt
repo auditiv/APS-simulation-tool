@@ -11,30 +11,30 @@ import org.springframework.stereotype.Service
  */
 
 @Service
-class ComponentsService(@Autowired var componentsRepo: ComponentsRepository)
-{
+class ComponentsService(@Autowired var componentsRepo: ComponentsRepository) {
     /**
      * This function ensures that at most one entry has readyToPlot set to true
      * Takes: Components table entry
      * Updates the Resository (DB)
      */
-    fun setAllEntriesToFalseUnlessOne(componentsRow: ComponentsTable){
-        for(item in this.componentsRepo.findAll()){
-            if (item.getId() != componentsRow.getId()){
+    fun setAllEntriesToFalseUnlessOne(componentsRow: ComponentsTable) {
+        for (item in this.componentsRepo.findAll()) {
+            if (item.getId() != componentsRow.getId()) {
                 item.setToFalse()
             }
         }
     }
 
-    fun deleteLine(componentsRow:ComponentsTable){
+    fun deleteLine(componentsRow: ComponentsTable) {
         this.componentsRepo.delete(componentsRow)
     }
 
-    fun getDefault():ComponentsTable{
+    fun getDefault(): ComponentsTable {
         return ComponentsTable(false)
 
     }
-    fun getall():Iterable<ComponentsTable>{
+
+    fun getall(): Iterable<ComponentsTable> {
         return componentsRepo.findAll()
     }
 
@@ -44,9 +44,9 @@ class ComponentsService(@Autowired var componentsRepo: ComponentsRepository)
      * returns: ComponentsTable (entry)
      */
     fun getLineById(id: Long): ComponentsTable {
-        if (this.componentsRepo.existsById(id)){
+        if (this.componentsRepo.existsById(id)) {
             return this.componentsRepo.findById(id).get()
-        }else{
+        } else {
             return this.getDefault()
         }
     }
@@ -54,7 +54,7 @@ class ComponentsService(@Autowired var componentsRepo: ComponentsRepository)
     /**
      * This function saves a new line in the sim_settings db
      */
-    fun saveLine(s:ComponentsTable):ComponentsTable{
+    fun saveLine(s: ComponentsTable): ComponentsTable {
         var sim = ComponentsTable(s.readyToPlot, s.algorithm, s.sensor, s.insulinPump, s.virtualPatient, s.meals)
         return this.componentsRepo.save(s)
     }
@@ -62,7 +62,7 @@ class ComponentsService(@Autowired var componentsRepo: ComponentsRepository)
     /**
      * This Function keeps the ID of the old item when updating
      */
-    fun saveExistingLine(s:ComponentsTable):ComponentsTable{
+    fun saveExistingLine(s: ComponentsTable): ComponentsTable {
         return this.componentsRepo.save(s)
     }
 
@@ -70,8 +70,8 @@ class ComponentsService(@Autowired var componentsRepo: ComponentsRepository)
      * this function returns all stored entries from the components repository (DB)
      * as Iterable
      */
-    fun getAll(): Iterable<ComponentsTable>{
-    return this.componentsRepo.findAll()
+    fun getAll(): Iterable<ComponentsTable> {
+        return this.componentsRepo.findAll()
     }
 
     fun deleteLineById(id: Long) {
@@ -79,7 +79,7 @@ class ComponentsService(@Autowired var componentsRepo: ComponentsRepository)
 
     }
 
-    fun updateItem(item: ComponentsTable):ComponentsTable {
+    fun updateItem(item: ComponentsTable): ComponentsTable {
         this.deleteLineById(item.getId())
         return this.saveExistingLine(item)
 

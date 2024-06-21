@@ -16,34 +16,35 @@ import jakarta.persistence.*
 @Table(name = "components")
 class ComponentsTable(
 
-        var readyToPlot: Boolean = false,
-        var algorithm: String = "",
-        var sensor: String = "",
-        var insulinPump: String = "",
-        var virtualPatient: String = "",
-        var meals: String = ""
-        //id: Long
+    var readyToPlot: Boolean = false,
+    var algorithm: String = "",
+    var sensor: String = "",
+    var insulinPump: String = "",
+    var virtualPatient: String = "",
+    var meals: String = ""
+    //id: Long
 
-)
-{
+) {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private var id : Long= 0L
+    private var id: Long = 0L
 
-    fun getreadyToPlot():Boolean{
+    fun getreadyToPlot(): Boolean {
         return this.readyToPlot
     }
 
-    fun setreadyToPlot(newVal:Boolean){
+    fun setreadyToPlot(newVal: Boolean) {
         this.readyToPlot = newVal
     }
-    fun getId():Long{
+
+    fun getId(): Long {
         return this.id
     }
 
     fun toggle() {
         this.setreadyToPlot(!(this.readyToPlot))
     }
+
     fun setToFalse() {
         this.setreadyToPlot(false)
     }
