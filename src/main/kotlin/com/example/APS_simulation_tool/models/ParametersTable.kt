@@ -6,8 +6,9 @@ import jakarta.persistence.Lob
 import jakarta.persistence.Table
 
 /**
- * This class models the DB of the parameters in a similary way as the ComponentsTable
+ * This class models the DB of the parameters in a similar way as the ComponentsTable
  * But the type here in each entry is thought to be JSON-String.
+ * Each entry recieves its ID by the corresponding ComponentsTable entry (One-to-One relation)
  */
 @Entity
 @Table(name = "parameters")

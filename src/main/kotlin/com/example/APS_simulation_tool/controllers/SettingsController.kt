@@ -88,9 +88,10 @@ class SettingsController(
      * Saves the chosen Simulation Settings into the Simulation Repository and
      * creates a default entry with the same id in the Parameters Repo
      */
-    @PostMapping("/setting") // in the HTML TAG INSIDE THE  FORM THE OBJECT COMES INTO THE <form ...th:object...> EACH ATTRIBUTE IS REFERENCED BY THE <select... name="" >inside the tag
-    fun saveSimulationSetting(@Valid sim: ComponentsTable, result: BindingResult, model: Model):String{ // last is the ID of the whished Simulation to be toggled
-        sim.setreadyToPlot(true) // SIMULATION WILL BE PLOTTED
+    @PostMapping("/setting") // in the HTML tag inside the form is referenced inside the <form ...th:object...>
+    // each attribute is referenced by the reference <select... name="" >inside the tag
+    fun saveSimulationSetting(@Valid sim: ComponentsTable, result: BindingResult, model: Model):String{
+        sim.setreadyToPlot(false) // will not be plotted right away
         var settings = ComponentsTable(sim.readyToPlot, sim.algorithm, sim.sensor, sim.insulinPump, sim.virtualPatient, sim.meals)
         compService.saveLine(settings)
         paraService.createDefaultParameters(settings) // create default entry of the parameters for the simulation

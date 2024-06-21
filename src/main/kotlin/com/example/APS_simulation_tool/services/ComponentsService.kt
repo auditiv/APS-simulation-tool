@@ -13,6 +13,11 @@ import org.springframework.stereotype.Service
 @Service
 class ComponentsService(@Autowired var componentsRepo: ComponentsRepository)
 {
+    /**
+     * This function ensures that at most one entry has readyToPlot set to true
+     * Takes: Components table entry
+     * Updates the Resository (DB)
+     */
     fun setAllEntriesToFalseUnlessOne(componentsRow: ComponentsTable){
         for(item in this.componentsRepo.findAll()){
             if (item.getId() != componentsRow.getId()){

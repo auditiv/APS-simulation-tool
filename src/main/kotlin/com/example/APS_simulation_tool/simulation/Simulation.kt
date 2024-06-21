@@ -16,6 +16,10 @@ class Simulation(
 
 
         ){
+    /**
+     * This function implements the whole closed loop data processing.
+     * It stores all blood sugar, insulin and carbs data into the corresponding maps.
+     */
     fun discreteSimulation() {
         var currentTime = patient.startTime
         // check iff there are already some Meals ready
@@ -33,13 +37,9 @@ class Simulation(
         while (minCounter < duration) {
             // Simulation step (assuming method exists in T1DPatient)
             val (BG, time) = patient.step(action)
-            println("BG value: $BG at time: $time")
-            println("Action.CHO: ${action.CHO} with insulin: ${action.insulin}")
-            // STORE THE BG : TIME && ACTION.INSULIN : TIME
             // Store BG values inject noise and sampling time
             sensor.returnOnlyValuesInGivenFrequency(Pair(time, sensor.injectNoise(BG)),BGMap) //go through glucose monitoring and filter sampling rate
             // Insulin Dose:
-            //sensor.returnOnlyValuesInGivenFrequency(Pair(time, action.insulin),InsulinMap) //go through glucose monitoring
             InsulinMap.put(time, this.action.insulin)
 
             // Meals Carbs:

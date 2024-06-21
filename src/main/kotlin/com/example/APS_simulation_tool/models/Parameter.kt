@@ -15,14 +15,19 @@ import java.time.LocalTime
         JsonSubTypes.Type(value = TimeParameter::class, name = "Time"),
         JsonSubTypes.Type(value = MealParameter::class, name = "Meal")
 )
-
-//@JsonIgnoreProperties(value = ["clockTime"])
+/**
+ * This class implements the class that implements the parameters.
+ * There are 3 types
+ *       Parameters
+ *      /         \
+ * TimeParameter MealsParameters
+ *
+ */
 open class Parameter(
         var name: String = "",
         var value: Number = -1,
         @JsonProperty("type")
         var type: String = "",
-        //var ptype: String = "",
         var unit : String = "",
         var description: String = ""
 ) {
@@ -36,7 +41,7 @@ open class Parameter(
 
                 is Double -> type = "Double"  // Assigning Double
                 is Int -> type = "Integer"   // Assigning Integer
-                // Assigning Integer
+
             }
         }else{
             if (type != "Meal")
@@ -48,6 +53,10 @@ open class Parameter(
 
 
     }
+
+    /**
+     * This function checks if two objects are the same version of the same entry
+     */
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -57,7 +66,7 @@ open class Parameter(
         if (name != other.name || value != other.value || type != other.type || unit != other.unit || description != other.description)
             return false // not equal
 
-        return true // else : equal!
+        return true
 
     }
 

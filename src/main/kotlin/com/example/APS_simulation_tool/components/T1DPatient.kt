@@ -74,9 +74,13 @@ class T1DPatient(
         this.parameters = paramsMap // new parameters
         ode= UVAPadovaODE(parameters) // overwrite ODE with new ODE with updated parameters
     }
-    // This function takes one step into the future by integrating over 1min  (timeperiod)
-    // and returning the (BG,Time) Pair after that minute
-    // it also decreases the carbsStorage by the Eating rate if the patient has eaten something
+
+    /**
+     * This function takes one step into the future by integrating over 1min  (timeperiod)
+     * and returning the (BG,Time) Pair after that minute
+     * ALso decreases the carbsStorage by the Eating rate if the patient has eaten something
+     *
+     */
 
     fun step(action: Action):Pair<Double,LocalTime> {
         // Update parameters based on the action
@@ -90,11 +94,9 @@ class T1DPatient(
         this.patientEats(this.parameters.getValue("CHO").toInt())
 
 
-        // THE STEP HANDLER SEEMS TO SHOW THE INTERNAL STATES THAT WHERE USED FOR CALCULATIONS
-        // GET TO THe WHISHED ENDSTATE AT TIME = +1min
-        //println("Here (after integration) CURRENTCONDITIONS we have the state:")
-        //println(this.currentConditions[12])
-        // INTIIAL CONDITIONS BEING ALTERED - MAKES NO SENSE:
+        // stepHandler stores internal data that was used for calculation
+        // and gets to the whished endstate: +1min
+
         //increase the Time Step
         this.tStart += SAMPLE_TIME.toLong()
         this.tEnd += SAMPLE_TIME.toLong()
@@ -202,7 +204,7 @@ class UVAPadovaODE(private var params: Map<String, Double>) : FirstOrderDifferen
 
         override fun computeDerivatives(t: Double, y: DoubleArray, yDot: DoubleArray) {
             // Implement your ODE here using the parameters
-            // This part just makes sure all values return something usefull
+            // This part makes sure all values return something usefull
             // to let the ode solver work in case there is a value missing which shouldn't
             // Unpack needed parameters
             val BW = params["BW"] ?: 75.0  // Body weight in kg, defaulting to 75 kg
@@ -354,13 +356,13 @@ class UVAPadovaODE(private var params: Map<String, Double>) : FirstOrderDifferen
             val y = interpolator.getInterpolatedState()
             times.add(t)
             states.add(y.clone())
-
-            if (isLast) {
-                println("Final state at t=$t: ${y.joinToString()}")
-            }
         }
     }
 
+/**
+ * This function runs a simple simulation step of the ODE model implemented.
+ * For testing purpose of the UVA/Padova ODE and the Stephandler.
+ */
     fun runSimulation(initialParams: Map<String, Double>, initialConditions: DoubleArray):DoubleArray {
         val integrator: FirstOrderIntegrator = DormandPrince853Integrator(1e-7, 1.0, 1e-7, 1e-7)
         val ode = UVAPadovaODE(initialParams)
@@ -369,10 +371,6 @@ class UVAPadovaODE(private var params: Map<String, Double>) : FirstOrderDifferen
         integrator.addStepHandler(stepHandler)
         integrator.integrate(ode, 0.0, initialConditions, 1.0, DoubleArray(ode.dimension))
 
-        // Access results from the step handler
-        stepHandler.states.forEachIndexed { index, state ->
-            println("Time: ${stepHandler.times[index]}, State: ${state.joinToString()}")
-        }
         return stepHandler.states.last()
     }
 

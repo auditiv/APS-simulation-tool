@@ -6,10 +6,14 @@ import kotlin.random.Random
 /**
  * This Class implements the Continuous Glucouse Monitoring.
  * We abstract here the Sensor just into a device that has a certain
- * Error range (random) for each Measurement and a whished Sampling Rate in Minutes
+ * error range (random) for each Measurement and a whished Sampling Rate in Minutes
  */
 class CGMSensor(var samplingRateMinutes:Int,
                 var errorRange: Double) {
+    /**
+     * This function takes a value pair and checks if the value is in the time grid (sampling rate)
+     * of the sensor and stores only the values that are taken in the sampling rate.
+     */
     fun returnOnlyValuesInGivenFrequency(BGTimeValue:Pair<LocalTime, Double,>, BGMap:MutableMap<LocalTime,Double>){
         if(BGTimeValue.first.minute % this.samplingRateMinutes == 0){
             // value is part of CGM measurement

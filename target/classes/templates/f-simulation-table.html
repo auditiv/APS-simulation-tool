@@ -41,8 +41,8 @@
       <td th:text="${s.sensor}"></td>
       <td  th:text="${s.insulinPump}">fill</td>
       <td  th:text="${s.meals}">fill</td>
-      <!--<td  th:text="${s.readyToPlot}">fill</td>-->
-      <!--THIS IS THe CHECKBOX  TRIGGERING THE POST REQUEST-->
+
+      <!--THIS IS THE CHECKBOX  TRIGGERING THE POST REQUEST-->
       <td>
         <form th:action="@{/update-feature}" method="post">
         <!-- Hidden field for the object ID -->
